@@ -8,20 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		7A72C6851BEAE6E6006D8551 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6841BEAE6E6006D8551 /* AppDelegate.swift */; };
-		7A72C6871BEAE6E6006D8551 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6861BEAE6E6006D8551 /* ViewController.swift */; };
 		7A72C68A1BEAE6E6006D8551 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A72C6881BEAE6E6006D8551 /* Main.storyboard */; };
 		7A72C68C1BEAE6E6006D8551 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */; };
 		7A72C68F1BEAE6E6006D8551 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A72C68D1BEAE6E6006D8551 /* LaunchScreen.storyboard */; };
+		7A72C6971BEAEA13006D8551 /* BreakoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */; };
+		7A72C6991BEAEA28006D8551 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */; };
+		7A72C69B1BEAEE28006D8551 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7A72C6811BEAE6E6006D8551 /* Breakout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Breakout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A72C6841BEAE6E6006D8551 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7A72C6861BEAE6E6006D8551 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		7A72C6891BEAE6E6006D8551 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7A72C68E1BEAE6E6006D8551 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7A72C6901BEAE6E6006D8551 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutViewController.swift; sourceTree = "<group>"; };
+		7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,8 +59,10 @@
 			isa = PBXGroup;
 			children = (
 				7A72C6841BEAE6E6006D8551 /* AppDelegate.swift */,
-				7A72C6861BEAE6E6006D8551 /* ViewController.swift */,
 				7A72C6881BEAE6E6006D8551 /* Main.storyboard */,
+				7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */,
+				7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */,
+				7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */,
 				7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */,
 				7A72C68D1BEAE6E6006D8551 /* LaunchScreen.storyboard */,
 				7A72C6901BEAE6E6006D8551 /* Info.plist */,
@@ -136,8 +142,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A72C6871BEAE6E6006D8551 /* ViewController.swift in Sources */,
+				7A72C69B1BEAEE28006D8551 /* TabBarViewController.swift in Sources */,
 				7A72C6851BEAE6E6006D8551 /* AppDelegate.swift in Sources */,
+				7A72C6971BEAEA13006D8551 /* BreakoutViewController.swift in Sources */,
+				7A72C6991BEAEA28006D8551 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
