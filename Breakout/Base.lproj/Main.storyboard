@@ -55,10 +55,10 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="bottom" secondItem="Sh0-e5-JsF" secondAttribute="top" id="0sq-VN-2Hg"/>
-                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="top" secondItem="6Zo-Pd-1QD" secondAttribute="top" id="H58-7a-Fk6"/>
-                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="leading" secondItem="6Zo-Pd-1QD" secondAttribute="leading" id="IUS-qb-So5"/>
-                            <constraint firstAttribute="trailing" secondItem="QXN-PL-0Bh" secondAttribute="trailing" id="xvV-9s-PZ2"/>
+                            <constraint firstAttribute="trailing" secondItem="QXN-PL-0Bh" secondAttribute="trailing" id="NNr-Zd-NoU"/>
+                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="top" secondItem="6Zo-Pd-1QD" secondAttribute="top" id="fHf-vv-r4P"/>
+                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="leading" secondItem="6Zo-Pd-1QD" secondAttribute="leading" id="irU-tA-pda"/>
+                            <constraint firstItem="QXN-PL-0Bh" firstAttribute="bottom" secondItem="Sh0-e5-JsF" secondAttribute="top" id="zwR-B3-Ghx"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" id="oND-aR-Bm4"/>
