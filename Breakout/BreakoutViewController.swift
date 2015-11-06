@@ -16,6 +16,7 @@ class BreakoutViewController: UIViewController {
         static let topIndentBeforeFirstRow: CGFloat = 20
         static let topPortionOfScreenForBlocks: CGFloat = 0.5
         static let paddleHeight: CGFloat = 15
+        static let ballSize: CGFloat = 10
     }
     
     // MARK: Adjustable Variables
@@ -29,6 +30,13 @@ class BreakoutViewController: UIViewController {
     @IBOutlet weak var gameView: UIView!
     var blocks = [UIView?]()
     var paddle = UIView()
+    lazy var ball: UIView = {
+        let xLocation = self.gameView.frame.midX - Constants.ballSize / 2
+        let yLocation = self.gameView.frame.maxY - self.paddle.frame.height - Constants.ballSize
+        let lazyView = UIView(frame: CGRect(origin: CGPoint(x: xLocation, y: yLocation), size: CGSize(width: Constants.ballSize, height: Constants.ballSize)))
+        lazyView.backgroundColor = UIColor.blackColor()
+        return lazyView
+    }()
     
     private var blockSize: CGSize {
         let w = (gameView.bounds.size.width - (horizontalSpacing * (blocksPerRow + 1))) / blocksPerRow
@@ -38,7 +46,7 @@ class BreakoutViewController: UIViewController {
     }
     
     // MARK: Methods
-    private func updateUI() {
+    private func updateBlockPositions() {
         var index = 0
         for row in 1...Int(numberOfRows) {
             for block in 1...Int(blocksPerRow) {
@@ -49,15 +57,14 @@ class BreakoutViewController: UIViewController {
                 blocks[index]!.frame.origin = CGPoint(x: xLocation, y: yLocation)  //FRAME, not bounds!!!  it took me two hours to figure out why the blocks weren't printing; don't forget that we have to use FRAME to adjust to the location of the view in the superview!!!!  (see lecture 5 notes)
                 
                 blocks[index]!.backgroundColor = UIColor.redColor()
-       
-        //CODE BELOW NOT NEEDED since we can use the blocks array to access the subview properties, since classes are REFERENCE TYPES; however, the code below works just fine!!
-                //gameView.subviews[index].frame.size = blockSize
-                //gameView.subviews[index].frame.origin = CGPoint(x: xLocation, y: yLocation)
-                //gameView.subviews[index].backgroundColor = UIColor.redColor()
                 
                 index++
             }
         }
+    }
+    
+    private func placeBall() {
+        gameView.addSubview(ball)
     }
     
     private func placePaddle() {
@@ -75,15 +82,15 @@ class BreakoutViewController: UIViewController {
             gameView.addSubview(block)
             blocks.append(block)
         }
-        gameView.addSubview(paddle)
-        //blocks.append(paddle)  //NOT added to the blocks array!!!  (duh)
-        print(blocks.count)
     }
     
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBoxes()
+        gameView.addSubview(paddle)
+        //blocks.append(paddle)  //NOT added to the blocks array!!!  (duh)
+        //gameView.addSubview(ball)
     }
     
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
@@ -93,7 +100,12 @@ class BreakoutViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         placePaddle()
-        updateUI()
+        updateBlockPositions()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        placeBall()
     }
     
     override func didReceiveMemoryWarning() {
