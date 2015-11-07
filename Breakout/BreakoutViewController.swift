@@ -58,11 +58,13 @@ class BreakoutViewController: UIViewController {
         case .Began: fallthrough
         case .Changed:
             let translation = gesture.translationInView(gameView)
-      //      if (paddle.frame.origin.x + translation.x) > gameView.frame.minX && (paddle.frame.origin.x + paddleWidth + translation.x) < gameView.frame.maxX {
+            if (paddle.frame.origin.x + translation.x) > gameView.frame.minX && (paddle.frame.origin.x + paddleWidth + translation.x) < gameView.frame.maxX {
                 paddle.frame.origin.x += translation.x
                 gesture.setTranslation(CGPointZero, inView: gameView)
-                animator.updateItemUsingCurrentState(paddle)
-      //      }
+                behavior.removeBoundary("paddle")
+                behavior.addBoundary("paddle", path: createBoundary(paddle))
+                // animator.updateItemUsingCurrentState(paddle)
+            }
         case .Ended: break
             
         default: break
@@ -99,6 +101,7 @@ class BreakoutViewController: UIViewController {
         paddle.frame.size.width = paddleWidth
         paddle.frame.origin = CGPoint(x: xLocation, y: yLocation)
         paddle.backgroundColor = UIColor.greenColor()
+        behavior.addBoundary("paddle", path: createBoundary(paddle))
     }
     
     private func setupBoxes() {
@@ -107,6 +110,23 @@ class BreakoutViewController: UIViewController {
             gameView.addSubview(block)
             blocks.append(block)
         }
+    }
+    
+    private func addWallBoundary() -> (name: String, path: UIBezierPath) {
+        let path = UIBezierPath()
+        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+        path.addLineToPoint(CGPointZero)
+        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+        path.addLineToPoint(CGPointZero)
+        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+        return ("wall", path)
+    }
+    
+    private func createBoundary(view: UIView) -> (UIBezierPath) {
+        let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
+        return path
     }
     
     // MARK: Lifecycle
@@ -126,6 +146,7 @@ class BreakoutViewController: UIViewController {
         placePaddle()
         placeBall()
         updateBlockPositions()
+        behavior.addBoundary(addWallBoundary().name, path: addWallBoundary().path)
         //animator.updateItemUsingCurrentState(gameView)
     }
     
@@ -133,9 +154,8 @@ class BreakoutViewController: UIViewController {
         super.viewDidAppear(true)
         if animatorNotSet {
             animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
-            behavior.addBoundary(gameView)
             behavior.addBallToBehaviors(ball)
-            behavior.addPaddleToBehaviors(paddle)
+     //       behavior.addPaddleToBehaviors(paddle)
             animatorNotSet = false
         }
     }

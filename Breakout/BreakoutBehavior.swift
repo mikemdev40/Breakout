@@ -11,27 +11,23 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
 
     var bounceCollider = UICollisionBehavior()
-    var paddleWallCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
     lazy var bounciness: UIDynamicItemBehavior = {
         let lazyBounciness = UIDynamicItemBehavior()
-        lazyBounciness.allowsRotation = false
-        lazyBounciness.elasticity = 0.5
+        lazyBounciness.allowsRotation = true
+        lazyBounciness.elasticity = 0.75
         return lazyBounciness
     }()
     
-    func addBoundary(view: UIView) {
-        //let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
-        let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: view.frame.origin.x, y: view.frame.maxY))
-        path.addLineToPoint(CGPointZero)
-        path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.origin.y))
-        path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.maxY))
-        path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.origin.y))
-        path.addLineToPoint(CGPointZero)
-        path.moveToPoint(CGPoint(x: view.frame.origin.x, y: view.frame.maxY))
-        bounceCollider.addBoundaryWithIdentifier("wall", forPath: path)
+    func addBoundary(name: String, path: UIBezierPath) {
+        bounceCollider.addBoundaryWithIdentifier(name, forPath: path)
+        print("added \(name)")
+    }
+    
+    func removeBoundary(name: String) {
+        bounceCollider.removeBoundaryWithIdentifier(name)
+        print("removed \(name)")
     }
     
     func addBallToBehaviors(view: UIView) {
@@ -40,15 +36,9 @@ class BreakoutBehavior: UIDynamicBehavior {
         bounciness.addItem(view)
     }
     
-    func addPaddleToBehaviors(view: UIView) {
-        bounceCollider.addItem(view)
-        paddleWallCollider.addItem(view)
-    }
-    
     func removeItemFromBehaviors(view: UIView) {
         bounceCollider.removeItem(view)
         gravity.removeItem(view)
-        paddleWallCollider.removeItem(view)
         push.removeItem(view)
     }
     
@@ -56,9 +46,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         super.init()
         addChildBehavior(bounceCollider)
         addChildBehavior(gravity)
-        addChildBehavior(paddleWallCollider)
         addChildBehavior(bounciness)
-        paddleWallCollider.translatesReferenceBoundsIntoBoundary = true
      //   bounceCollider.translatesReferenceBoundsIntoBoundary = true
     }
 }
