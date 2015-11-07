@@ -27,16 +27,23 @@ class BreakoutViewController: UIViewController {
     var paddleWidth: CGFloat = 75
     
     // MARK: Variables
-    @IBOutlet weak var gameView: UIView!
+    @IBOutlet weak var gameView: GameView!
+    
     var blocks = [UIView?]()
     var paddle = UIView()
-    lazy var ball: UIView = {
-        let xLocation = self.gameView.frame.midX - Constants.ballSize / 2
-        let yLocation = self.gameView.frame.maxY - self.paddle.frame.height - Constants.ballSize
-        let lazyView = UIView(frame: CGRect(origin: CGPoint(x: xLocation, y: yLocation), size: CGSize(width: Constants.ballSize, height: Constants.ballSize)))
-        lazyView.backgroundColor = UIColor.blackColor()
-        return lazyView
+    var ball = UIView()
+    var animatorNotSet = true
+//    lazy var ball: UIView = {
+//        let lazyBall = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: Constants.ballSize, height: Constants.ballSize)))
+//        return lazyBall
+//    }()
+    
+    lazy var animator: UIDynamicAnimator = {
+        let lazyAnimator = UIDynamicAnimator(referenceView: self.gameView)
+        return lazyAnimator
     }()
+    
+    var behavior = BreakoutBehavior()
     
     private var blockSize: CGSize {
         let w = (gameView.bounds.size.width - (horizontalSpacing * (blocksPerRow + 1))) / blocksPerRow
@@ -46,16 +53,30 @@ class BreakoutViewController: UIViewController {
     }
     
     // MARK: Methods
+    @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .Began: fallthrough
+        case .Changed:
+            let translation = gesture.translationInView(gameView)
+      //      if (paddle.frame.origin.x + translation.x) > gameView.frame.minX && (paddle.frame.origin.x + paddleWidth + translation.x) < gameView.frame.maxX {
+                paddle.frame.origin.x += translation.x
+                gesture.setTranslation(CGPointZero, inView: gameView)
+                animator.updateItemUsingCurrentState(paddle)
+      //      }
+        case .Ended: break
+            
+        default: break
+        }
+    }
+    
     private func updateBlockPositions() {
         var index = 0
         for row in 1...Int(numberOfRows) {
             for block in 1...Int(blocksPerRow) {
                 let xLocation = horizontalSpacing * CGFloat(block) + blockSize.width * (CGFloat(block) - 1)
                 let yLocation = verticalSpacing * CGFloat(row) + blockSize.height * (CGFloat(row) - 1) + Constants.topIndentBeforeFirstRow
-                blocks[index]!.frame.size = blockSize  // we can adjust settings on an array of subviews because classes are REFERENCE types so when we change one of the properties of the subview in the blocks array, we are changing the property of the REAL subview (not a copy of it)!!!
-                
-                blocks[index]!.frame.origin = CGPoint(x: xLocation, y: yLocation)  //FRAME, not bounds!!!  it took me two hours to figure out why the blocks weren't printing; don't forget that we have to use FRAME to adjust to the location of the view in the superview!!!!  (see lecture 5 notes)
-                
+                blocks[index]!.frame.size = blockSize
+                blocks[index]!.frame.origin = CGPoint(x: xLocation, y: yLocation)
                 blocks[index]!.backgroundColor = UIColor.redColor()
                 
                 index++
@@ -64,14 +85,19 @@ class BreakoutViewController: UIViewController {
     }
     
     private func placeBall() {
-        gameView.addSubview(ball)
+        let xLocation = gameView.frame.midX - Constants.ballSize / 2
+        let yLocation = gameView.frame.maxY - paddle.frame.height - Constants.ballSize - 100
+        ball.frame.size.height = Constants.ballSize
+        ball.frame.size.width = Constants.ballSize
+        ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
+        ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
-        paddle.frame.size.height = Constants.paddleHeight
-        paddle.frame.size.width = paddleWidth
         let xLocation = gameView.frame.midX - paddleWidth / 2
         let yLocation = gameView.frame.maxY - paddle.frame.height
+        paddle.frame.size.height = Constants.paddleHeight
+        paddle.frame.size.width = paddleWidth
         paddle.frame.origin = CGPoint(x: xLocation, y: yLocation)
         paddle.backgroundColor = UIColor.greenColor()
     }
@@ -89,8 +115,7 @@ class BreakoutViewController: UIViewController {
         super.viewDidLoad()
         setupBoxes()
         gameView.addSubview(paddle)
-        //blocks.append(paddle)  //NOT added to the blocks array!!!  (duh)
-        //gameView.addSubview(ball)
+        gameView.addSubview(ball)
     }
     
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
@@ -100,12 +125,20 @@ class BreakoutViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         placePaddle()
+        placeBall()
         updateBlockPositions()
+        //animator.updateItemUsingCurrentState(gameView)
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
-        placeBall()
+        if animatorNotSet {
+            animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
+          //  behavior.addBoundary(gameView)
+            behavior.addBallToBehaviors(ball)
+            behavior.addPaddleToBehaviors(paddle)
+            animatorNotSet = false
+        }
     }
     
     override func didReceiveMemoryWarning() {
