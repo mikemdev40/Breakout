@@ -12,8 +12,10 @@ class GameView: UIView {
 
     override func drawRect(rect: CGRect) {
         let outerBoundary = UIBezierPath()
-        outerBoundary.moveToPoint(CGPoint(x: frame.origin.x + 100, y: frame.maxY))
+        outerBoundary.moveToPoint(CGPoint(x: frame.origin.x, y: frame.maxY))
         outerBoundary.addLineToPoint(CGPointZero)
+        outerBoundary.addLineToPoint(CGPoint(x: frame.maxX, y: frame.origin.y))
+        outerBoundary.addLineToPoint(CGPoint(x: frame.maxX, y: frame.maxY))
         outerBoundary.stroke()
     }
 

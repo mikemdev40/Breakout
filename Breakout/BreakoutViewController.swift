@@ -78,7 +78,6 @@ class BreakoutViewController: UIViewController {
                 blocks[index]!.frame.size = blockSize
                 blocks[index]!.frame.origin = CGPoint(x: xLocation, y: yLocation)
                 blocks[index]!.backgroundColor = UIColor.redColor()
-                
                 index++
             }
         }
@@ -134,7 +133,7 @@ class BreakoutViewController: UIViewController {
         super.viewDidAppear(true)
         if animatorNotSet {
             animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
-          //  behavior.addBoundary(gameView)
+            behavior.addBoundary(gameView)
             behavior.addBallToBehaviors(ball)
             behavior.addPaddleToBehaviors(paddle)
             animatorNotSet = false

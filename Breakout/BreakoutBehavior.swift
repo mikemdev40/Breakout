@@ -28,7 +28,10 @@ class BreakoutBehavior: UIDynamicBehavior {
         path.addLineToPoint(CGPointZero)
         path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.origin.y))
         path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.maxY))
-  //      paddleWallCollider.addBoundaryWithIdentifier("wall", forPath: path)
+        path.addLineToPoint(CGPoint(x: view.frame.maxX, y: view.frame.origin.y))
+        path.addLineToPoint(CGPointZero)
+        path.moveToPoint(CGPoint(x: view.frame.origin.x, y: view.frame.maxY))
+        bounceCollider.addBoundaryWithIdentifier("wall", forPath: path)
     }
     
     func addBallToBehaviors(view: UIView) {
@@ -56,6 +59,6 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(paddleWallCollider)
         addChildBehavior(bounciness)
         paddleWallCollider.translatesReferenceBoundsIntoBoundary = true
-        bounceCollider.translatesReferenceBoundsIntoBoundary = true
+     //   bounceCollider.translatesReferenceBoundsIntoBoundary = true
     }
 }
