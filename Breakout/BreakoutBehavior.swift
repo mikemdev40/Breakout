@@ -14,6 +14,12 @@ class BreakoutBehavior: UIDynamicBehavior {
     var paddleWallCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
+    lazy var bounciness: UIDynamicItemBehavior = {
+        let lazyBounciness = UIDynamicItemBehavior()
+        lazyBounciness.allowsRotation = false
+        lazyBounciness.elasticity = 0.5
+        return lazyBounciness
+    }()
     
     func addBoundary(view: UIView) {
         //let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
@@ -28,6 +34,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     func addBallToBehaviors(view: UIView) {
         bounceCollider.addItem(view)
         gravity.addItem(view)
+        bounciness.addItem(view)
     }
     
     func addPaddleToBehaviors(view: UIView) {
@@ -47,7 +54,8 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(bounceCollider)
         addChildBehavior(gravity)
         addChildBehavior(paddleWallCollider)
+        addChildBehavior(bounciness)
         paddleWallCollider.translatesReferenceBoundsIntoBoundary = true
-    //    bounceCollider.translatesReferenceBoundsIntoBoundary = true
+        bounceCollider.translatesReferenceBoundsIntoBoundary = true
     }
 }
