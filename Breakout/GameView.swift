@@ -10,8 +10,16 @@ import UIKit
 
 class GameView: UIView {
 
-//    override func drawRect(rect: CGRect) {
-//        
-//    }
+    var locations = [String: UIBezierPath]()
+    
+    func placeCircle(name: String, circle: UIBezierPath?) {
+        locations[name] = circle
+        setNeedsDisplay()
+    }
 
+    override func drawRect(rect: CGRect) {
+        for (_, circle) in locations {
+            circle.stroke()
+        }
+    }
 }

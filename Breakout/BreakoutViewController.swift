@@ -33,10 +33,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     var paddle = UIView()
     var ball = UIView()
     var animatorNotSet = true
-//    lazy var ball: UIView = {
-//        let lazyBall = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: Constants.ballSize, height: Constants.ballSize)))
-//        return lazyBall
-//    }()
+    var ballCenter = CGPoint() {
+        didSet {
+            print(ballCenter)
+        }
+    }
     
     lazy var animator: UIDynamicAnimator = {
         let lazyAnimator = UIDynamicAnimator(referenceView: self.gameView)
@@ -51,6 +52,15 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         let size = CGSize(width: w, height: h)
         return size
     }
+    
+    lazy var bounciness: UIDynamicItemBehavior = {
+        let lazyBounciness = UIDynamicItemBehavior()
+        lazyBounciness.allowsRotation = false
+        lazyBounciness.elasticity = 1
+        lazyBounciness.resistance = 0
+        lazyBounciness.friction = 0
+        return lazyBounciness
+    }()
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
@@ -163,6 +173,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
             behavior.addBallToBehaviors(ball)
+            animator.addBehavior(bounciness)  //added the bounciness behavior to the viewcontoller instead of the breakoutbehavior class because i wanted to be able to update the ballCenter variable based on its action, which i coulnd't figure out how to transmit the updated center from the breakoutbehavior class TO the viewcontroller, although i think notifications is the way this could be accomplished
+            bounciness.addItem(ball)
+            bounciness.action = {
+                self.ballCenter = self.ball.center
+            }
      //       behavior.addPaddleToBehaviors(paddle)
             animatorNotSet = false
         }
