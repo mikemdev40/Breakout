@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BreakoutViewController: UIViewController {
+class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
 
     // MARK: Constants
     private struct Constants {
@@ -71,6 +71,10 @@ class BreakoutViewController: UIViewController {
         }
     }
     
+    func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
+        print("collision")
+    }
+    
     private func updateBlockPositions() {
         var index = 0
         for row in 1...Int(numberOfRows) {
@@ -87,7 +91,7 @@ class BreakoutViewController: UIViewController {
     
     private func placeBall() {
         let xLocation = gameView.frame.midX - Constants.ballSize / 2
-        let yLocation = gameView.frame.maxY - paddle.frame.height - Constants.ballSize - 100
+        let yLocation = gameView.frame.maxY - paddle.frame.height - Constants.ballSize
         ball.frame.size.height = Constants.ballSize
         ball.frame.size.width = Constants.ballSize
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
@@ -121,6 +125,7 @@ class BreakoutViewController: UIViewController {
         path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         path.addLineToPoint(CGPointZero)
         path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+        path.closePath()
         return ("wall", path)
     }
     
@@ -135,6 +140,8 @@ class BreakoutViewController: UIViewController {
         setupBoxes()
         gameView.addSubview(paddle)
         gameView.addSubview(ball)
+        animator.delegate = self
+        behavior.bounceCollider.collisionDelegate = self
     }
     
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
@@ -146,7 +153,7 @@ class BreakoutViewController: UIViewController {
         placePaddle()
         placeBall()
         updateBlockPositions()
-        behavior.addBoundary(addWallBoundary().name, path: addWallBoundary().path)
+   //     behavior.addBoundary(addWallBoundary().name, path: addWallBoundary().path)
         //animator.updateItemUsingCurrentState(gameView)
     }
     
