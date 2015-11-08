@@ -63,7 +63,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 gesture.setTranslation(CGPointZero, inView: gameView)
                 behavior.removeBoundary("paddle")
                 behavior.addBoundary("paddle", path: createBoundary(paddle))
-                // animator.updateItemUsingCurrentState(paddle)
+                //animator.updateItemUsingCurrentState(paddle)
             }
         case .Ended: break
             
@@ -160,6 +160,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
         if animatorNotSet {
+            animator.removeAllBehaviors()
             animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
             behavior.addBallToBehaviors(ball)
      //       behavior.addPaddleToBehaviors(paddle)
