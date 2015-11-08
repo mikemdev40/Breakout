@@ -36,6 +36,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     var ballCenter = CGPoint() {
         didSet {
             print(ballCenter)
+            let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize / 2), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
+            gameView.placeCircle("ball", circle: path)
         }
     }
     
@@ -105,7 +107,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         ball.frame.size.height = Constants.ballSize
         ball.frame.size.width = Constants.ballSize
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
-        ball.backgroundColor = UIColor.blackColor()
+       // ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
