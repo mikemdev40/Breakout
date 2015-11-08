@@ -29,13 +29,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     // MARK: Variables
     @IBOutlet weak var gameView: GameView!
     
-    var blocks = [UIView?]()
+    var blocks = [String: UIView]()
     var paddle = UIView()
     var ball = UIView()
     var animatorNotSet = true
+    var behavior = BreakoutBehavior()
+    
     var ballCenter = CGPoint() {
         didSet {
-            print(ballCenter)
             let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize / 2), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
             gameView.placeCircle("ball", circle: path)
         }
@@ -45,8 +46,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         let lazyAnimator = UIDynamicAnimator(referenceView: self.gameView)
         return lazyAnimator
     }()
-    
-    var behavior = BreakoutBehavior()
     
     private var blockSize: CGSize {
         let w = (gameView.bounds.size.width - (horizontalSpacing * (blocksPerRow + 1))) / blocksPerRow
@@ -84,7 +83,15 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
-        print("collision")
+        if let collided = identifier as? String {
+            if collided != "paddle" {
+                //print(collided)
+                behavior.removeBoundaryWithIdentifier(collided)
+                behavior.removeItem(blocks[collided]!)
+                blocks[collided]?.removeFromSuperview()
+                blocks[collided] = nil
+            }
+        }
     }
     
     private func updateBlockPositions() {
@@ -93,9 +100,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             for block in 1...Int(blocksPerRow) {
                 let xLocation = horizontalSpacing * CGFloat(block) + blockSize.width * (CGFloat(block) - 1)
                 let yLocation = verticalSpacing * CGFloat(row) + blockSize.height * (CGFloat(row) - 1) + Constants.topIndentBeforeFirstRow
-                blocks[index]!.frame.size = blockSize
-                blocks[index]!.frame.origin = CGPoint(x: xLocation, y: yLocation)
-                blocks[index]!.backgroundColor = UIColor.redColor()
+                if let block = blocks["\(index)"] {
+                    block.frame.size = blockSize
+                    block.frame.origin = CGPoint(x: xLocation, y: yLocation)
+                    block.backgroundColor = UIColor.redColor()
+                    let boxPath = UIBezierPath(rect: CGRect(origin: block.frame.origin, size: block.frame.size))
+                    behavior.removeBoundary("\(index)")
+                    behavior.addBoundary("\(index)", path: boxPath)
+                }
                 index++
             }
         }
@@ -121,10 +133,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     private func setupBoxes() {
+        var index = 0
         for var count = 1; count <= Int(numberOfRows * blocksPerRow); ++count {
             let block = UIView()
             gameView.addSubview(block)
-            blocks.append(block)
+            blocks["\(index)"] = block
+            index++
         }
     }
     

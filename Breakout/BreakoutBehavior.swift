@@ -13,15 +13,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     var bounceCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
-    
-//    lazy var bounciness: UIDynamicItemBehavior = {
-//        let lazyBounciness = UIDynamicItemBehavior()
-//        lazyBounciness.allowsRotation = false
-//        lazyBounciness.elasticity = 1
-//        lazyBounciness.resistance = 0
-//        lazyBounciness.friction = 0
-//        return lazyBounciness
-//    }()
+    var magnitude: CGFloat = 0.1
     
 //    func randomAngle() -> CGFloat {
 //        
@@ -38,24 +30,19 @@ class BreakoutBehavior: UIDynamicBehavior {
     func addBallToBehaviors(view: UIView) {
         bounceCollider.addItem(view)
  //       gravity.addItem(view)
- //       bounciness.addItem(view)
         push = UIPushBehavior(items: [view], mode: .Instantaneous)
         push.angle = CGFloat(-M_PI_4)
-        push.magnitude = 0.03
+        push.magnitude = magnitude
         push.action = { [unowned self] in
             self.removeChildBehavior(self.push)
-            print("push removed")
         }
         addChildBehavior(push)
-//        bounciness.action = {
-//            self.ballCenter = view.center
-//            print(self.ballCenter)
-//        }
+
     }
     
     func removeItemFromBehaviors(view: UIView) {
         bounceCollider.removeItem(view)
-        gravity.removeItem(view)
+ //       gravity.removeItem(view)
         push.removeItem(view)
     }
     
@@ -63,8 +50,6 @@ class BreakoutBehavior: UIDynamicBehavior {
         super.init()
         addChildBehavior(bounceCollider)
         addChildBehavior(gravity)
-//        addChildBehavior(bounciness)
         bounceCollider.translatesReferenceBoundsIntoBoundary = true
-        
     }
 }
