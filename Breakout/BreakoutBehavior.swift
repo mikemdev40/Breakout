@@ -19,11 +19,13 @@ class BreakoutBehavior: UIDynamicBehavior {
     }
     
     func randomAngle() -> CGFloat {
-        var random: Double
+        var random = Double(arc4random_uniform(UInt32(1000)))/8000
         if arc4random_uniform(UInt32(2)) == 1 {
-            random = (Double(arc4random_uniform(UInt32(1000)))/5000 + 0.3) * M_PI
+            print("Q1")
+            random = (random + 3/16) * M_PI
         } else {
-            random = (Double(arc4random_uniform(UInt32(1000)))/5000 + 0.5) * M_PI
+            print("Q2")
+            random = (random + 11/16) * M_PI
         }
         print(random)
         return CGFloat(random)
