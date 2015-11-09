@@ -16,7 +16,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         static let topIndentBeforeFirstRow: CGFloat = 20
         static let topPortionOfScreenForBlocks: CGFloat = 0.5
         static let paddleHeight: CGFloat = 15
-        static let ballSize: CGFloat = 10
+        static let ballSize: CGFloat = 5
+        static let circleToBallRatio: CGFloat = 1
     }
     
     // MARK: Adjustable Variables
@@ -37,7 +38,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     var ballCenter = CGPoint() {
         didSet {
-            let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize / 2), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
+            let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize * Constants.circleToBallRatio), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
             gameView.placeCircle("ball", circle: path)
         }
     }
@@ -56,7 +57,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     lazy var bounciness: UIDynamicItemBehavior = {
         let lazyBounciness = UIDynamicItemBehavior()
-        lazyBounciness.allowsRotation = false
+        lazyBounciness.allowsRotation = true
         lazyBounciness.elasticity = 1
         lazyBounciness.resistance = 0
         lazyBounciness.friction = 0
@@ -77,19 +78,24 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 //animator.updateItemUsingCurrentState(paddle)
             }
         case .Ended: break
-            
         default: break
         }
     }
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
-        if let collided = identifier as? String {
-            if collided != "paddle" {
-                //print(collided)
+        if let collidedBoundary = identifier as? String {
+            if let collidedInt = Int(collidedBoundary) {
+                let collided = "\(collidedInt)"
                 behavior.removeBoundaryWithIdentifier(collided)
                 behavior.removeItem(blocks[collided]!)
-                blocks[collided]?.removeFromSuperview()
-                blocks[collided] = nil
+                UIView.animateWithDuration(0.5, animations: { () -> Void in
+                        self.blocks[collided]?.backgroundColor = UIColor.blueColor()
+                        self.blocks[collided]?.alpha = 0
+                    },
+                    completion: { (Bool) -> Void in
+                        self.blocks[collided]?.removeFromSuperview()
+                        self.blocks[collided] = nil
+                })
             }
         }
     }
@@ -142,18 +148,18 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         }
     }
     
-    private func addWallBoundary() -> (name: String, path: UIBezierPath) {
-        let path = UIBezierPath()
-        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
-        path.addLineToPoint(CGPointZero)
-        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
-        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
-        path.addLineToPoint(CGPointZero)
-        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
-        path.closePath()
-        return ("wall", path)
-    }
+//    private func addWallBoundary() -> (name: String, path: UIBezierPath) {
+//        let path = UIBezierPath()
+//        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+//        path.addLineToPoint(CGPointZero)
+//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+//        path.addLineToPoint(CGPointZero)
+//        path.addLineToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+//        path.closePath()
+//        return ("wall", path)
+//    }
     
     private func createBoundary(view: UIView) -> (UIBezierPath) {
         let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
@@ -179,7 +185,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         placePaddle()
         placeBall()
         updateBlockPositions()
-   //     behavior.addBoundary(addWallBoundary().name, path: addWallBoundary().path)
+        behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+        behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+        behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
         //animator.updateItemUsingCurrentState(gameView)
     }
     

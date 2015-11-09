@@ -13,14 +13,28 @@ class BreakoutBehavior: UIDynamicBehavior {
     var bounceCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
-    var magnitude: CGFloat = 0.1
+    var magnitude: CGFloat = 0.01
+    var angle: CGFloat {
+        return randomAngle()
+    }
     
-//    func randomAngle() -> CGFloat {
-//        
-//    }
+    func randomAngle() -> CGFloat {
+        var random: Double
+        if arc4random_uniform(UInt32(2)) == 1 {
+            random = (Double(arc4random_uniform(UInt32(1000)))/5000 + 0.3) * M_PI
+        } else {
+            random = (Double(arc4random_uniform(UInt32(1000)))/5000 + 0.5) * M_PI
+        }
+        print(random)
+        return CGFloat(random)
+    }
     
     func addBoundary(name: String, path: UIBezierPath) {
         bounceCollider.addBoundaryWithIdentifier(name, forPath: path)
+    }
+    
+    func addBoundary(name: String, start: CGPoint, end: CGPoint) {
+        bounceCollider.addBoundaryWithIdentifier(name, fromPoint: start, toPoint: end)
     }
     
     func removeBoundary(name: String) {
@@ -31,7 +45,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         bounceCollider.addItem(view)
  //       gravity.addItem(view)
         push = UIPushBehavior(items: [view], mode: .Instantaneous)
-        push.angle = CGFloat(-M_PI_4)
+        push.angle = angle
         push.magnitude = magnitude
         push.action = { [unowned self] in
             self.removeChildBehavior(self.push)
@@ -50,6 +64,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         super.init()
         addChildBehavior(bounceCollider)
         addChildBehavior(gravity)
-        bounceCollider.translatesReferenceBoundsIntoBoundary = true
+   //     bounceCollider.translatesReferenceBoundsIntoBoundary = true
+        randomAngle()
     }
 }

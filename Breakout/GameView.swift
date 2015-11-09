@@ -20,7 +20,7 @@ class GameView: UIView {
     override func drawRect(rect: CGRect) {
         for (_, circle) in locations {
             circle.stroke()
-            circle.fill()
+            circle.fillWithBlendMode(.Normal, alpha: 0.5)
         }
     }
 }
