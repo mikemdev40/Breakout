@@ -52,6 +52,20 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     func addBallToBehaviors(view: UIView) {
         bounceCollider.addItem(view)
+        bounceCollider.action = nil
+        bounceCollider.action = { [unowned self] in
+            let ball = view
+            if let gameView = self.dynamicAnimator?.referenceView {
+                if ball.frame.origin.y > gameView.frame.maxY + 5 {
+                  //  print("out of bounds")
+                    ball.removeFromSuperview()
+                    self.dynamicAnimator?.removeAllBehaviors()
+                    let center = NSNotificationCenter.defaultCenter()
+                    let notifcation = NSNotification(name: BallNotification.outNotification, object: self)
+                    center.postNotification(notifcation)
+                }
+            }
+        }
         pushBall(view)
     }
     
@@ -66,6 +80,5 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(bounceCollider)
         addChildBehavior(gravity)
    //     bounceCollider.translatesReferenceBoundsIntoBoundary = true
-        randomAngle()
     }
 }

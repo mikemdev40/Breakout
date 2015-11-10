@@ -8,6 +8,10 @@
 
 import UIKit
 
+struct BallNotification {
+    static let outNotification = "ball is out of bounds"
+}
+
 class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
 
     // MARK: Constants
@@ -87,7 +91,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     func didTap(gesture: UIGestureRecognizer) {
-        print("TAPPED")
         behavior.pushBall(ball)
     }
     
@@ -173,6 +176,13 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBoxes()
+        let center = NSNotificationCenter.defaultCenter()
+        let notificationQueue = NSOperationQueue.mainQueue()
+        let receiver = behavior
+        center.addObserverForName(BallNotification.outNotification, object: receiver, queue: notificationQueue) { (NSNotification) -> Void in
+            print("OUT!")
+        }
+        
         gameView.addSubview(paddle)
         gameView.addSubview(ball)
         behavior.bounceCollider.collisionDelegate = self
@@ -187,7 +197,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.removeBoundary("leftwall")
         behavior.removeBoundary("topwall")
         behavior.removeBoundary("rightwall")
-        behavior.removeBoundary("bottomwall")
+    //    behavior.removeBoundary("bottomwall")
         animator.updateItemUsingCurrentState(gameView)
       //  print(behavior.bounceCollider.boundaryIdentifiers)
         placePaddle()
@@ -201,7 +211,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+    //    behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -212,6 +222,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             animator.addBehavior(bounciness)
             bounciness.action = {
                 self.ballCenter = self.ball.center
+               // print(self.ballCenter)
             }
             animatorNotSet = false
         }
