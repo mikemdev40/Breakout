@@ -21,13 +21,10 @@ class BreakoutBehavior: UIDynamicBehavior {
     func randomAngle() -> CGFloat {
         var random = Double(arc4random_uniform(UInt32(1000)))/8000
         if arc4random_uniform(UInt32(2)) == 1 {
-            print("Q1")
             random = (random + 3/16) * M_PI
         } else {
-            print("Q2")
             random = (random + 11/16) * M_PI
         }
-        print(random)
         return CGFloat(random)
     }
     
@@ -43,17 +40,19 @@ class BreakoutBehavior: UIDynamicBehavior {
         bounceCollider.removeBoundaryWithIdentifier(name)
     }
     
-    func addBallToBehaviors(view: UIView) {
-        bounceCollider.addItem(view)
- //       gravity.addItem(view)
-        push = UIPushBehavior(items: [view], mode: .Instantaneous)
+    func pushBall(ball: UIView) {
+        push = UIPushBehavior(items: [ball], mode: .Instantaneous)
         push.angle = angle
         push.magnitude = magnitude
         push.action = { [unowned self] in
             self.removeChildBehavior(self.push)
         }
         addChildBehavior(push)
-
+    }
+    
+    func addBallToBehaviors(view: UIView) {
+        bounceCollider.addItem(view)
+        pushBall(view)
     }
     
     func removeItemFromBehaviors(view: UIView) {

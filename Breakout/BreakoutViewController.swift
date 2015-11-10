@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
+class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
 
     // MARK: Constants
     private struct Constants {
@@ -28,7 +28,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     var paddleWidth: CGFloat = 75
     
     // MARK: Variables
-    @IBOutlet weak var gameView: GameView!
+    @IBOutlet weak var gameView: GameView! {
+        didSet {
+            gameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap:"))
+        }
+    }
     
     var blocks = [String: UIView]()
     var paddle = UIView()
@@ -57,7 +61,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     lazy var bounciness: UIDynamicItemBehavior = {
         let lazyBounciness = UIDynamicItemBehavior()
-        lazyBounciness.allowsRotation = true
+        lazyBounciness.allowsRotation = false
         lazyBounciness.elasticity = 1
         lazyBounciness.resistance = 0
         lazyBounciness.friction = 0
@@ -82,26 +86,36 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         }
     }
     
+    func didTap(gesture: UIGestureRecognizer) {
+        print("TAPPED")
+        behavior.pushBall(ball)
+    }
+    
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         if let collidedBoundary = identifier as? String {
+            //print("collided with \(collidedBoundary)")
             if let collidedInt = Int(collidedBoundary) {
                 let collided = "\(collidedInt)"
-                behavior.removeBoundaryWithIdentifier(collided)
-                behavior.removeItem(blocks[collided]!)
-                UIView.animateWithDuration(0.5, animations: { () -> Void in
-                        self.blocks[collided]?.backgroundColor = UIColor.blueColor()
-                        self.blocks[collided]?.alpha = 0
-                    },
-                    completion: { (Bool) -> Void in
-                        self.blocks[collided]?.removeFromSuperview()
-                        self.blocks[collided] = nil
-                })
+                if let block = blocks[collided] {
+                    behavior.removeBoundaryWithIdentifier(collided)
+                    behavior.removeItem(block)
+                    UIView.animateWithDuration(0.5, animations: { () -> Void in
+                        block.backgroundColor = UIColor.blueColor()
+                        block.alpha = 0
+                        },
+                        completion: { (Bool) -> Void in
+                         //   print("block removed: \(collided)")
+                            block.removeFromSuperview()
+                            self.blocks[collided] = nil
+                    })
+                }
             }
         }
     }
     
     private func updateBlockPositions() {
         var index = 0
+        var numboxes = 0
         for row in 1...Int(numberOfRows) {
             for block in 1...Int(blocksPerRow) {
                 let xLocation = horizontalSpacing * CGFloat(block) + blockSize.width * (CGFloat(block) - 1)
@@ -113,10 +127,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     let boxPath = UIBezierPath(rect: CGRect(origin: block.frame.origin, size: block.frame.size))
                     behavior.removeBoundary("\(index)")
                     behavior.addBoundary("\(index)", path: boxPath)
+                    numboxes++
                 }
                 index++
             }
         }
+      //  print("\(numboxes) updated")
     }
     
     private func placeBall() {
@@ -125,7 +141,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         ball.frame.size.height = Constants.ballSize
         ball.frame.size.width = Constants.ballSize
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
-       // ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
@@ -135,6 +150,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         paddle.frame.size.width = paddleWidth
         paddle.frame.origin = CGPoint(x: xLocation, y: yLocation)
         paddle.backgroundColor = UIColor.greenColor()
+        behavior.removeBoundary("paddle")
         behavior.addBoundary("paddle", path: createBoundary(paddle))
     }
     
@@ -148,19 +164,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         }
     }
     
-//    private func addWallBoundary() -> (name: String, path: UIBezierPath) {
-//        let path = UIBezierPath()
-//        path.moveToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
-//        path.addLineToPoint(CGPointZero)
-//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
-//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-//        path.addLineToPoint(CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
-//        path.addLineToPoint(CGPointZero)
-//        path.addLineToPoint(CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
-//        path.closePath()
-//        return ("wall", path)
-//    }
-    
     private func createBoundary(view: UIView) -> (UIBezierPath) {
         let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
         return path
@@ -172,7 +175,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         setupBoxes()
         gameView.addSubview(paddle)
         gameView.addSubview(ball)
-        animator.delegate = self
         behavior.bounceCollider.collisionDelegate = self
     }
     
@@ -182,27 +184,35 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        behavior.removeBoundary("leftwall")
+        behavior.removeBoundary("topwall")
+        behavior.removeBoundary("rightwall")
+        behavior.removeBoundary("bottomwall")
+        animator.updateItemUsingCurrentState(gameView)
+      //  print(behavior.bounceCollider.boundaryIdentifiers)
         placePaddle()
-        placeBall()
         updateBlockPositions()
+        behavior.removeItemFromBehaviors(ball)
+        bounciness.removeItem(ball)
+        placeBall()
+        ballCenter = ball.frame.origin
+        behavior.addBallToBehaviors(ball)
+        bounciness.addItem(ball)
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        //animator.updateItemUsingCurrentState(gameView)
+        behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(true)
         if animatorNotSet {
             animator.removeAllBehaviors()
-            animator.addBehavior(behavior)  //added HERE because when it was added to viewDidLoad, the gameView size that was captured was the frame of the gameView that DIDN'T include the tab bar at the bottom
-            behavior.addBallToBehaviors(ball)
-            animator.addBehavior(bounciness)  //added the bounciness behavior to the viewcontoller instead of the breakoutbehavior class because i wanted to be able to update the ballCenter variable based on its action, which i coulnd't figure out how to transmit the updated center from the breakoutbehavior class TO the viewcontroller, although i think notifications is the way this could be accomplished
-            bounciness.addItem(ball)
+            animator.addBehavior(behavior)
+            animator.addBehavior(bounciness)
             bounciness.action = {
                 self.ballCenter = self.ball.center
             }
-     //       behavior.addPaddleToBehaviors(paddle)
             animatorNotSet = false
         }
     }
