@@ -16,10 +16,14 @@ struct BallNotification {
 
 class BreakoutBehavior: UIDynamicBehavior {
     
+    struct Constants {
+        static let outOfBoundsOffset: CGFloat = 10
+    }
+    
     var bounceCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
-    var magnitude: CGFloat = 0.01
+    var magnitude: CGFloat = 0.03
     var angle: CGFloat {
         return randomAngle()
     }
@@ -80,8 +84,7 @@ class BreakoutBehavior: UIDynamicBehavior {
             let centerNotification = NSNotification(name: BallNotification.newCenter, object: self, userInfo: [BallNotification.key: NSValue(CGPoint: self.ballCenter)])
             self.center.postNotification(centerNotification)
             if let gameView = self.dynamicAnimator?.referenceView {
-                if ball.frame.origin.y > gameView.frame.maxY + 5 {
-                    //  print("out of bounds")
+                if ball.frame.origin.y > gameView.frame.maxY + Constants.outOfBoundsOffset {
                     ball.removeFromSuperview()
                     self.dynamicAnimator?.removeAllBehaviors()
                     let outNotifcation = NSNotification(name: BallNotification.outNotification, object: self)
