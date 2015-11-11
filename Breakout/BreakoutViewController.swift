@@ -8,12 +8,9 @@
 
 import UIKit
 
-struct BallNotification {
-    static let outNotification = "ball is out of bounds"
-}
 
 class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
-
+    
     // MARK: Constants
     private struct Constants {
         static let heightToWidthRatio: CGFloat = 2/3
@@ -43,7 +40,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     var ball = UIView()
     var animatorNotSet = true
     var behavior = BreakoutBehavior()
-    
     var ballCenter = CGPoint() {
         didSet {
             let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize * Constants.circleToBallRatio), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
@@ -63,14 +59,14 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         return size
     }
     
-    lazy var bounciness: UIDynamicItemBehavior = {
-        let lazyBounciness = UIDynamicItemBehavior()
-        lazyBounciness.allowsRotation = false
-        lazyBounciness.elasticity = 1
-        lazyBounciness.resistance = 0
-        lazyBounciness.friction = 0
-        return lazyBounciness
-    }()
+    //    lazy var bounciness: UIDynamicItemBehavior = {
+    //        let lazyBounciness = UIDynamicItemBehavior()
+    //        lazyBounciness.allowsRotation = false
+    //        lazyBounciness.elasticity = 1
+    //        lazyBounciness.resistance = 0
+    //        lazyBounciness.friction = 0
+    //        return lazyBounciness
+    //    }()
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
@@ -107,7 +103,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                         block.alpha = 0
                         },
                         completion: { (Bool) -> Void in
-                         //   print("block removed: \(collided)")
+                            //   print("block removed: \(collided)")
                             block.removeFromSuperview()
                             self.blocks[collided] = nil
                     })
@@ -135,7 +131,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 index++
             }
         }
-      //  print("\(numboxes) updated")
+        //  print("\(numboxes) updated")
     }
     
     private func placeBall() {
@@ -144,6 +140,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         ball.frame.size.height = Constants.ballSize
         ball.frame.size.width = Constants.ballSize
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
+        //ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
@@ -182,6 +179,12 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         center.addObserverForName(BallNotification.outNotification, object: receiver, queue: notificationQueue) { (NSNotification) -> Void in
             print("OUT!")
         }
+        center.addObserverForName(BallNotification.newCenter, object: receiver, queue: notificationQueue) { (notification) -> Void in
+            if let center = notification.userInfo?[BallNotification.key] as? NSValue {
+                self.ballCenter = center.CGPointValue()
+                print("the new center is \(self.ballCenter)")
+            }
+        }
         
         gameView.addSubview(paddle)
         gameView.addSubview(ball)
@@ -189,7 +192,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-       // print("switched! \(gameView.bounds)")
+        // print("switched! \(gameView.bounds)")
     }
     
     override func viewDidLayoutSubviews() {
@@ -197,21 +200,21 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.removeBoundary("leftwall")
         behavior.removeBoundary("topwall")
         behavior.removeBoundary("rightwall")
-    //    behavior.removeBoundary("bottomwall")
+        //    behavior.removeBoundary("bottomwall")
         animator.updateItemUsingCurrentState(gameView)
-      //  print(behavior.bounceCollider.boundaryIdentifiers)
+        //  print(behavior.bounceCollider.boundaryIdentifiers)
         placePaddle()
         updateBlockPositions()
         behavior.removeItemFromBehaviors(ball)
-        bounciness.removeItem(ball)
+        //        bounciness.removeItem(ball)
         placeBall()
         ballCenter = ball.frame.origin
         behavior.addBallToBehaviors(ball)
-        bounciness.addItem(ball)
+        //        bounciness.addItem(ball)
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-    //    behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+        //    behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -219,11 +222,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         if animatorNotSet {
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)
-            animator.addBehavior(bounciness)
-            bounciness.action = {
-                self.ballCenter = self.ball.center
-               // print(self.ballCenter)
-            }
+            //            animator.addBehavior(bounciness)
+            //            bounciness.action = {
+            //                self.ballCenter = self.ball.center
+            //               // print(self.ballCenter)
+            //            }
             animatorNotSet = false
         }
     }
@@ -232,5 +235,5 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         super.didReceiveMemoryWarning()
         print("MEMORY WARNING")
     }
-
+    
 }
