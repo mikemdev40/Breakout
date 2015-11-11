@@ -222,11 +222,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         if animatorNotSet {
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)
-            //            animator.addBehavior(bounciness)
-            //            bounciness.action = {
-            //                self.ballCenter = self.ball.center
-            //               // print(self.ballCenter)
-            //            }
+
             animatorNotSet = false
         }
     }
