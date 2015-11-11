@@ -21,6 +21,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let circleToBallRatio: CGFloat = 1
     }
     
+    private enum gameOver {
+        case Win
+        case Lose
+    }
+    
     // MARK: Adjustable Variables
     var blocksPerRow: CGFloat = 6
     var numberOfRows: CGFloat = 4
@@ -58,15 +63,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         let size = CGSize(width: w, height: h)
         return size
     }
-    
-    //    lazy var bounciness: UIDynamicItemBehavior = {
-    //        let lazyBounciness = UIDynamicItemBehavior()
-    //        lazyBounciness.allowsRotation = false
-    //        lazyBounciness.elasticity = 1
-    //        lazyBounciness.resistance = 0
-    //        lazyBounciness.friction = 0
-    //        return lazyBounciness
-    //    }()
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
@@ -164,6 +160,36 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         }
     }
     
+    private func showGameOver(end: gameOver) {
+        switch end {
+        case .Lose:
+            print("OUT")
+            let alert = UIAlertController(title: "Game Over", message: "Play again?", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Replay", style: .Default, handler: { (UIAlertAction) -> Void in
+            self.reset()
+            }))
+            alert.addAction(UIAlertAction(title: "End", style: .Cancel, handler: nil))
+            presentViewController(alert, animated: true, completion: nil)
+        case .Win:
+            break
+        }
+    }
+    
+    private func reset() {
+        setupBoxes()
+        gameView.addSubview(paddle)
+        gameView.addSubview(ball)
+        placePaddle()
+        updateBlockPositions()
+        animator.removeAllBehaviors()
+        animator.addBehavior(behavior)
+        behavior.removeItemFromBehaviors(ball)
+        placeBall()
+        ballCenter = ball.frame.origin
+        behavior.addBallToBehaviors(ball)
+    }
+    
+    
     private func createBoundary(view: UIView) -> (UIBezierPath) {
         let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
         return path
@@ -172,20 +198,20 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupBoxes()
         let center = NSNotificationCenter.defaultCenter()
         let notificationQueue = NSOperationQueue.mainQueue()
         let receiver = behavior
         center.addObserverForName(BallNotification.outNotification, object: receiver, queue: notificationQueue) { (NSNotification) -> Void in
-            print("OUT!")
+            //print("OUT!")
+            self.showGameOver(.Lose)
         }
         center.addObserverForName(BallNotification.newCenter, object: receiver, queue: notificationQueue) { (notification) -> Void in
             if let center = notification.userInfo?[BallNotification.key] as? NSValue {
                 self.ballCenter = center.CGPointValue()
-                print("the new center is \(self.ballCenter)")
+                //print("the new center is \(self.ballCenter)")
             }
         }
-        
+        setupBoxes()
         gameView.addSubview(paddle)
         gameView.addSubview(ball)
         behavior.bounceCollider.collisionDelegate = self
@@ -206,11 +232,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         placePaddle()
         updateBlockPositions()
         behavior.removeItemFromBehaviors(ball)
-        //        bounciness.removeItem(ball)
         placeBall()
         ballCenter = ball.frame.origin
         behavior.addBallToBehaviors(ball)
-        //        bounciness.addItem(ball)
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
@@ -222,7 +246,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         if animatorNotSet {
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)
-
             animatorNotSet = false
         }
     }

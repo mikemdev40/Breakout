@@ -95,7 +95,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     func removeItemFromBehaviors(view: UIView) {
         bounceCollider.removeItem(view)
         bounciness.removeItem(view)
-        //       gravity.removeItem(view)
+        //   gravity.removeItem(view)
         push.removeItem(view)
     }
     
