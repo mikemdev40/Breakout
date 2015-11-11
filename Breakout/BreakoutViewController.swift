@@ -75,7 +75,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 gesture.setTranslation(CGPointZero, inView: gameView)
                 behavior.removeBoundary("paddle")
                 behavior.addBoundary("paddle", path: createBoundary(paddle))
-                //animator.updateItemUsingCurrentState(paddle)
+            //  animator.updateItemUsingCurrentState(paddle)
             }
         case .Ended: break
         default: break
@@ -88,11 +88,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         if let collidedBoundary = identifier as? String {
-            //print("collided with \(collidedBoundary)")
+        //  print("collided with \(collidedBoundary)")
             if let collidedInt = Int(collidedBoundary) {
                 let collided = "\(collidedInt)"
                 if let block = blocks[collided] {
-                    //print("block \(collided)")
+                //  print("block \(collided)")
                     behavior.removeBoundaryWithIdentifier(collided)
                     behavior.removeItem(block)
                     blocks[collided] = nil  //moved to here from completion closure which fixed the "ghost" boundaries that sometimes happened when a box was disappearing during a rotation transition
@@ -101,12 +101,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                         block.alpha = 0
                         },
                         completion: { [unowned self] (Bool) -> Void in
-                            //print("block removed: \(collided)")
+                        //  print("block removed: \(collided)")
                             block.removeFromSuperview()
-                            //self.blocks[collided] = nil
                             if self.blocks.count == 0 {
                                 self.showGameOver(.Win)
-                              //  self.behavior.removeBoundary("bottomwall")
+                                self.behavior.removeBoundary("bottomwall")
                             }
                     })
                 }
@@ -133,7 +132,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 index++
             }
         }
-          print("\(numboxes) updated")
+    //  print("\(numboxes) updated")
     }
     
     private func placeBall() {
@@ -142,7 +141,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         ball.frame.size.height = Constants.ballSize
         ball.frame.size.width = Constants.ballSize
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
-        //ball.backgroundColor = UIColor.blackColor()
+    //  ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
@@ -158,7 +157,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     private func setupBoxes() {
         var index = 0
-        print(blocks.count)
         for var count = 1; count <= Int(numberOfRows * blocksPerRow); ++count {
             let block = UIView()
             gameView.addSubview(block)
@@ -172,19 +170,19 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             switch end {
             case .Lose:
                 let alert = UIAlertController(title: "Game Over", message: "Try again?", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Replay", style: .Default, handler: { (UIAlertAction) -> Void in
+                alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
+                alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
                     self.reset()
                 }))
-                alert.addAction(UIAlertAction(title: "End", style: .Cancel, handler: nil))
                 presentViewController(alert, animated: true, completion: nil)
             case .Win:
                 let alert = UIAlertController(title: "YOU WIN!", message: "Play again?", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Replay", style: .Default, handler: { (UIAlertAction) -> Void in
+                alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
+                alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
                     self.reset()
                 }))
-                alert.addAction(UIAlertAction(title: "End", style: .Cancel, handler: nil))
                 presentViewController(alert, animated: true, completion: nil)
-                print(self.presentedViewController)
+            //  print(self.presentedViewController)
             }
         }
     }
@@ -242,7 +240,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.removeBoundary("topwall")
         behavior.removeBoundary("rightwall")
         behavior.removeBoundary("bottomwall")
-        //  print(behavior.bounceCollider.boundaryIdentifiers)
+    //  print(behavior.bounceCollider.boundaryIdentifiers)
         placePaddle()
         updateBlockPositions()
         behavior.removeItemFromBehaviors(ball)
