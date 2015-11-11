@@ -98,14 +98,12 @@ class BreakoutBehavior: UIDynamicBehavior {
     func removeItemFromBehaviors(view: UIView) {
         bounceCollider.removeItem(view)
         bounciness.removeItem(view)
-        //   gravity.removeItem(view)
         push.removeItem(view)
     }
     
     override init() {
         super.init()
         addChildBehavior(bounceCollider)
-        addChildBehavior(gravity)
         addChildBehavior(bounciness)
         center = NSNotificationCenter.defaultCenter()
         //     bounceCollider.translatesReferenceBoundsIntoBoundary = true

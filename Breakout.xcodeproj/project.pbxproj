@@ -12,10 +12,10 @@
 		7A72C68C1BEAE6E6006D8551 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */; };
 		7A72C68F1BEAE6E6006D8551 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A72C68D1BEAE6E6006D8551 /* LaunchScreen.storyboard */; };
 		7A72C6971BEAEA13006D8551 /* BreakoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */; };
-		7A72C6991BEAEA28006D8551 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */; };
 		7A72C69B1BEAEE28006D8551 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */; };
 		7A72C69D1BEE42E2006D8551 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C69C1BEE42E2006D8551 /* GameView.swift */; };
 		7A72C69F1BEE45B1006D8551 /* BreakoutBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A72C69E1BEE45B1006D8551 /* BreakoutBehavior.swift */; };
+		7ACDA6E71BF3B06400772046 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACDA6E61BF3B06400772046 /* SettingsTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,10 +26,10 @@
 		7A72C68E1BEAE6E6006D8551 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7A72C6901BEAE6E6006D8551 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutViewController.swift; sourceTree = "<group>"; };
-		7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		7A72C69C1BEE42E2006D8551 /* GameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		7A72C69E1BEE45B1006D8551 /* BreakoutBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutBehavior.swift; sourceTree = "<group>"; };
+		7ACDA6E61BF3B06400772046 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsTableViewController.swift; path = ../SettingsTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,16 +64,40 @@
 			children = (
 				7A72C6841BEAE6E6006D8551 /* AppDelegate.swift */,
 				7A72C6881BEAE6E6006D8551 /* Main.storyboard */,
-				7A72C69E1BEE45B1006D8551 /* BreakoutBehavior.swift */,
-				7A72C69C1BEE42E2006D8551 /* GameView.swift */,
 				7A72C69A1BEAEE28006D8551 /* TabBarViewController.swift */,
-				7A72C6981BEAEA28006D8551 /* SettingsViewController.swift */,
-				7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */,
-				7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */,
-				7A72C68D1BEAE6E6006D8551 /* LaunchScreen.storyboard */,
-				7A72C6901BEAE6E6006D8551 /* Info.plist */,
+				7ACDA6E91BF3C58C00772046 /* Game */,
+				7ACDA6EA1BF3C5A900772046 /* Settings */,
+				7ACDA6EB1BF3C5C200772046 /* Other */,
 			);
 			path = Breakout;
+			sourceTree = "<group>";
+		};
+		7ACDA6E91BF3C58C00772046 /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				7A72C69E1BEE45B1006D8551 /* BreakoutBehavior.swift */,
+				7A72C6961BEAEA13006D8551 /* BreakoutViewController.swift */,
+				7A72C69C1BEE42E2006D8551 /* GameView.swift */,
+			);
+			name = Game;
+			sourceTree = "<group>";
+		};
+		7ACDA6EA1BF3C5A900772046 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7ACDA6E61BF3B06400772046 /* SettingsTableViewController.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		7ACDA6EB1BF3C5C200772046 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				7A72C68B1BEAE6E6006D8551 /* Assets.xcassets */,
+				7A72C6901BEAE6E6006D8551 /* Info.plist */,
+				7A72C68D1BEAE6E6006D8551 /* LaunchScreen.storyboard */,
+			);
+			name = Other;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -152,8 +176,8 @@
 				7A72C69B1BEAEE28006D8551 /* TabBarViewController.swift in Sources */,
 				7A72C6851BEAE6E6006D8551 /* AppDelegate.swift in Sources */,
 				7A72C6971BEAEA13006D8551 /* BreakoutViewController.swift in Sources */,
-				7A72C6991BEAEA28006D8551 /* SettingsViewController.swift in Sources */,
 				7A72C69D1BEE42E2006D8551 /* GameView.swift in Sources */,
+				7ACDA6E71BF3B06400772046 /* SettingsTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
