@@ -152,15 +152,36 @@
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="wsg-mf-alo">
-                                                    <rect key="frame" x="162" y="15" width="94" height="29"/>
+                                                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" continuous="NO" value="5" minimumValue="3" maximumValue="7" translatesAutoresizingMaskIntoConstraints="NO" id="wsg-mf-alo">
+                                                    <rect key="frame" x="148" y="15" width="94" height="29"/>
                                                     <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="94" id="jNU-J9-tqq"/>
+                                                    </constraints>
+                                                    <connections>
+                                                        <action selector="blockStepper:" destination="Pre-xn-sJb" eventType="valueChanged" id="Fpc-LU-19c"/>
+                                                    </connections>
                                                 </stepper>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RFc-Zv-cSw">
+                                                    <rect key="frame" x="270" y="19" width="60" height="21.5"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="21.5" id="8pk-8G-3GO"/>
+                                                        <constraint firstAttribute="width" constant="60" id="lo9-4l-gU1"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <animations/>
                                             <constraints>
+                                                <constraint firstItem="wsg-mf-alo" firstAttribute="centerY" secondItem="vSs-qU-t5q" secondAttribute="centerY" id="0pN-pP-bNT"/>
+                                                <constraint firstItem="RFc-Zv-cSw" firstAttribute="leading" secondItem="wsg-mf-alo" secondAttribute="trailing" constant="28" id="1f7-kV-EjR"/>
                                                 <constraint firstItem="UJT-BE-5Xs" firstAttribute="leading" secondItem="vSs-qU-t5q" secondAttribute="leadingMargin" id="HBj-Ry-ue3"/>
+                                                <constraint firstItem="wsg-mf-alo" firstAttribute="leading" secondItem="UJT-BE-5Xs" secondAttribute="trailing" constant="8" id="ULv-ew-NA1"/>
                                                 <constraint firstItem="UJT-BE-5Xs" firstAttribute="centerY" secondItem="vSs-qU-t5q" secondAttribute="centerY" id="kkY-XI-iIx"/>
+                                                <constraint firstItem="RFc-Zv-cSw" firstAttribute="centerY" secondItem="vSs-qU-t5q" secondAttribute="centerY" id="nfP-Uw-dQa"/>
                                                 <constraint firstItem="UJT-BE-5Xs" firstAttribute="top" secondItem="vSs-qU-t5q" secondAttribute="topMargin" constant="3" id="zUM-ia-AeZ"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -248,6 +269,7 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="" id="tPq-pi-Tr2"/>
                     <connections>
+                        <outlet property="numBlocksLabel" destination="RFc-Zv-cSw" id="ey5-zD-3Bl"/>
                         <outlet property="numRowsLabel" destination="z3f-8b-Dg6" id="VIb-C2-Oog"/>
                     </connections>
                 </tableViewController>

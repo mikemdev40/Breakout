@@ -274,7 +274,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if let update = dataSource?.didUpdateAnything {
-            print(update)
             if update {
                 reset()
                 prepareUI()

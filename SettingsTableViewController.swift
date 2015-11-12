@@ -27,6 +27,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
     var didUpdateAnything = false
     
     @IBOutlet weak var numRowsLabel: UILabel!
+    @IBOutlet weak var numBlocksLabel: UILabel!
     
     //MARK: Actions
     
@@ -48,6 +49,24 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
        // print(numberOfRowsData)
     }
     
+
+    @IBAction func blockStepper(sender: UIStepper) {
+
+        let numBlocks = Int(sender.value)
+        
+        numBlocksLabel.text = String(numBlocks)
+        
+        if blocksPerRowData != numBlocks {
+            didUpdateAnything = true
+        }
+        
+        blocksPerRowData = numBlocks
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        didUpdateAnything = false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -55,9 +74,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
         // this allows us to connect the two VCs so that this one can serve as the datasource for the other
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
             bvc.dataSource = self
-            print("datasource connected")
         }
-        didUpdateAnything = false
     }
 
     override func didReceiveMemoryWarning() {
