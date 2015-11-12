@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol GameViewDataSource {
+    var numberOfRowsData: Int { get }
+    var blocksPerRowData: Int { get }
+    var didUpdateAnything: Bool { get }
+}
 
 class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
@@ -19,6 +24,8 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let paddleHeight: CGFloat = 15
         static let ballSize: CGFloat = 5
         static let circleToBallRatio: CGFloat = 1
+        static let defaultRows = 4
+        static let defaultBlocks = 5
     }
     
     private enum gameOver {
@@ -27,13 +34,22 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     // MARK: Adjustable Variables
-    var blocksPerRow: CGFloat = 6
-    var numberOfRows: CGFloat = 4
+    var blocksPerRow: CGFloat {
+        let blocks = dataSource?.blocksPerRowData ?? Constants.defaultBlocks
+        return CGFloat(blocks)
+    }
+    
+    var numberOfRows: CGFloat {
+        let blocks = dataSource?.numberOfRowsData ?? Constants.defaultRows
+        return CGFloat(blocks)
+    }
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
     var paddleWidth: CGFloat = 75
     
     // MARK: Variables
+    var dataSource: GameViewDataSource?
+    
     @IBOutlet weak var gameView: GameView! {
         didSet {
             gameView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "didTap:"))
@@ -188,6 +204,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     private func reset() {
+        for (_, block) in blocks {
+            block.removeFromSuperview()
+        }
         blocks.removeAll()
         setupBoxes()
         gameView.addSubview(paddle)
@@ -202,6 +221,24 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.addBallToBehaviors(ball)
     }
     
+    private func prepareUI() {
+        behavior.removeBoundary("leftwall")
+        behavior.removeBoundary("topwall")
+        behavior.removeBoundary("rightwall")
+  //      behavior.removeBoundary("bottomwall")
+        //  print(behavior.bounceCollider.boundaryIdentifiers)
+        placePaddle()
+        updateBlockPositions()
+        behavior.removeItemFromBehaviors(ball)
+        placeBall()
+        ballCenter = ball.frame.origin
+        behavior.addBallToBehaviors(ball)
+        behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
+        behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
+        behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+ //       behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+        animator.updateItemUsingCurrentState(gameView)
+    }
     
     private func createBoundary(view: UIView) -> (UIBezierPath) {
         let path = UIBezierPath(rect: CGRect(origin: view.frame.origin, size: view.frame.size))
@@ -236,32 +273,27 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        behavior.removeBoundary("leftwall")
-        behavior.removeBoundary("topwall")
-        behavior.removeBoundary("rightwall")
-        behavior.removeBoundary("bottomwall")
-    //  print(behavior.bounceCollider.boundaryIdentifiers)
-        placePaddle()
-        updateBlockPositions()
-        behavior.removeItemFromBehaviors(ball)
-        placeBall()
-        ballCenter = ball.frame.origin
-        behavior.addBallToBehaviors(ball)
-        behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
-        behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
-        behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        animator.updateItemUsingCurrentState(gameView)
-
+        if let update = dataSource?.didUpdateAnything {
+            print(update)
+            if update {
+                reset()
+                prepareUI()
+            } else {
+                prepareUI()
+            }
+        } else {
+            prepareUI()
+        }
     }
     
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         if animatorNotSet {
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)
             animatorNotSet = false
         }
+        
     }
     
     //stops and resets the ball when the settings tab is opened up
