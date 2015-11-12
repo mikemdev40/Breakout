@@ -13,8 +13,26 @@ import UIKit
 
 class SettingsTableViewController: UITableViewController {
 
+    //MARK: Variables
+    
+    @IBOutlet weak var numRowsLabel: UILabel!
+    
+    //MARK: Actions
+    
+    @IBAction func numRowsSlider(sender: UISlider) {
+        
+        // got the code below from http://stackoverflow.com/questions/27927533/how-to-make-uislider-have-discrete-intervals-for-example-intervals-of-5000 which allows you to set an interval AND update the slider to be discrete
+        
+        let interval = 1  // since this = 1, don't really need this line, but good to have in case i want to reuse this code at another time
+        let numRowsValue = Int(sender.value / Float(interval)) * interval
+        sender.value = Float(numRowsValue)  //makes slider discrete
+
+        numRowsLabel.text = String(numRowsValue)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 

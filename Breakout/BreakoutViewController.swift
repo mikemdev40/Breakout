@@ -256,12 +256,19 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(true)
+        super.viewDidAppear(animated)
         if animatorNotSet {
             animator.removeAllBehaviors()
             animator.addBehavior(behavior)
             animatorNotSet = false
         }
+    }
+    
+    //stops and resets the ball when the settings tab is opened up
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        animator.removeAllBehaviors()
+        animatorNotSet = true
     }
     
     override func didReceiveMemoryWarning() {
