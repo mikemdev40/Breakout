@@ -24,8 +24,9 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
     
     var numberOfRowsData = Defaults.rows //required by protocol
     var blocksPerRowData = Defaults.blocks //required by protocol
-    var didUpdateAnything = false
-    
+    var challengeMode = false
+    var breakoutVC = BreakoutViewController()
+
     @IBOutlet weak var numRowsLabel: UILabel!
     @IBOutlet weak var numBlocksLabel: UILabel!
     
@@ -42,7 +43,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
         numRowsLabel.text = String(numRowsValue)
         
         if numberOfRowsData != numRowsValue {
-            didUpdateAnything = true
+            breakoutVC.didUpdateAnything = true
         }
         
         numberOfRowsData = numRowsValue  //serving as the datasource for breakout VC, this updates value for breakout VC to take
@@ -57,23 +58,28 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
         numBlocksLabel.text = String(numBlocks)
         
         if blocksPerRowData != numBlocks {
-            didUpdateAnything = true
+            breakoutVC.didUpdateAnything = true
         }
         
         blocksPerRowData = numBlocks
     }
     
+    @IBAction func challengeSwitch(sender: UISwitch) {
+        challengeMode = sender.on
+        breakoutVC.didUpdateAnything = true
+    }
+    
     override func viewDidAppear(animated: Bool) {
-        didUpdateAnything = false
+        breakoutVC.didUpdateAnything = false
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // got the code below from http://makeapppie.com/2015/02/04/swift-swift-tutorials-passing-data-in-tab-bar-controllers/
+        // code below inspired by http://makeapppie.com/2015/02/04/swift-swift-tutorials-passing-data-in-tab-bar-controllers/
         // this allows us to connect the two VCs so that this one can serve as the datasource for the other
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
-            bvc.dataSource = self
+            breakoutVC = bvc
+            breakoutVC.dataSource = self
         }
     }
 

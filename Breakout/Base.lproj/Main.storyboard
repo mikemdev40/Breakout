@@ -64,10 +64,10 @@
                             <tableViewSection headerTitle="Block Settings" id="afS-RD-Nnj">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="60" id="yAc-XD-OGp">
-                                        <rect key="frame" x="0.0" y="50" width="600" height="60"/>
+                                        <rect key="frame" x="0.0" y="49.5" width="600" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yAc-XD-OGp" id="jYW-uh-COC">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Note:  Making any changes to these settings while a game is in process will reset your game!" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WQp-mf-Xba">
@@ -211,6 +211,9 @@
                                                         <constraint firstAttribute="width" constant="49" id="G09-1K-R6l"/>
                                                         <constraint firstAttribute="height" constant="31" id="rtB-cK-vdX"/>
                                                     </constraints>
+                                                    <connections>
+                                                        <action selector="challengeSwitch:" destination="Pre-xn-sJb" eventType="valueChanged" id="Hy3-tX-aDn"/>
+                                                    </connections>
                                                 </switch>
                                             </subviews>
                                             <animations/>
