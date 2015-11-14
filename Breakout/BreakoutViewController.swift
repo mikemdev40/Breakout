@@ -306,6 +306,20 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        AppDelegate.Motion.Manager.stopAccelerometerUpdates()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        let motionManager = AppDelegate.Motion.Manager
+        if motionManager.accelerometerAvailable {
+            motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
+                print("look")
+            })
+        }
+    }
+    
     //stops and resets the ball when the settings tab is opened up
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
