@@ -22,7 +22,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let topIndentBeforeFirstRow: CGFloat = 20
         static let topPortionOfScreenForBlocks: CGFloat = 0.5
         static let paddleHeight: CGFloat = 15
-        static let ballSize: CGFloat = 5
+        static let ballRadius: CGFloat = 5
         static let circleToBallRatio: CGFloat = 1
         static let defaultRows = 4
         static let defaultBlocks = 5
@@ -65,7 +65,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     var behavior = BreakoutBehavior()
     var ballCenter = CGPoint() {
         didSet {
-            let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballSize * Constants.circleToBallRatio), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
+            let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballRadius * Constants.circleToBallRatio), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
             gameView.placeCircle("ball", circle: path)
         }
     }
@@ -158,10 +158,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     private func placeBall() {
-        let xLocation = gameView.frame.midX - Constants.ballSize / 2
-        let yLocation = gameView.frame.maxY - paddle.frame.height - Constants.ballSize
-        ball.frame.size.height = Constants.ballSize
-        ball.frame.size.width = Constants.ballSize
+        let xLocation = gameView.frame.midX - Constants.ballRadius
+        let yLocation = gameView.frame.maxY - paddle.frame.height - 2 * Constants.ballRadius
+        ball.frame.size = CGSize(width: Constants.ballRadius * 2, height: Constants.ballRadius * 2)
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
     //  ball.backgroundColor = UIColor.blackColor()
     }
@@ -231,7 +230,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         animator.addBehavior(behavior)
         behavior.removeItemFromBehaviors(ball)
         placeBall()
-        ballCenter = ball.frame.origin
+        ballCenter = ball.center
         behavior.addBallToBehaviors(ball)
     }
     
@@ -245,7 +244,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         updateBlockPositions()
         behavior.removeItemFromBehaviors(ball)
         placeBall()
-        ballCenter = ball.frame.origin
+        ballCenter = ball.center
         behavior.addBallToBehaviors(ball)
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))

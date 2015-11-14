@@ -14,16 +14,22 @@ struct BallNotification {
     static let key = "center key"
 }
 
+protocol BallSettingsDataSource {
+    var ballMagnitude: CGFloat { get }
+}
+
 class BreakoutBehavior: UIDynamicBehavior {
     
     struct Constants {
         static let outOfBoundsOffset: CGFloat = 10
     }
     
+    var dataSource: BallSettingsDataSource?
+    
     var bounceCollider = UICollisionBehavior()
     var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
-    var magnitude: CGFloat = 0.03
+    var magnitude: CGFloat = 0.065
     var angle: CGFloat {
         return randomAngle()
     }
@@ -65,7 +71,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     func pushBall(ball: UIView) {
         push = UIPushBehavior(items: [ball], mode: .Instantaneous)
         push.angle = angle
-        push.magnitude = magnitude
+        push.magnitude = dataSource?.ballMagnitude ?? magnitude
         push.action = { [unowned self] in
             self.removeChildBehavior(self.push)
         }

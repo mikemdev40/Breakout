@@ -6,29 +6,31 @@
 //  Copyright © 2015 MikeMiller. All rights reserved.
 //
 
-//--- NOTES ---
-// - DISABLED scrolling of the tableView, because that changed the frame of the OTHER viewcontroller too, and caused the game to end early (under Attributes Inspector, unchecked the "scrolling enabled" box)
-
 import UIKit
 
-class SettingsTableViewController: UITableViewController, GameViewDataSource {
+class SettingsTableViewController: UITableViewController, GameViewDataSource, BallSettingsDataSource {
 
     //MARK: Default Values
     
-    struct Defaults {
+    struct Constants {
         static let rows = 4
         static let blocks = 5
+        static let ballSpeedSlow: CGFloat = 0.025
+        static let ballSpeedNormal: CGFloat = 0.06
+        static let ballSpeedFast: CGFloat = 0.095
     }
     
     //MARK: Variables
     
-    var numberOfRowsData = Defaults.rows //required by protocol
-    var blocksPerRowData = Defaults.blocks //required by protocol
+    var numberOfRowsData = Constants.rows //required by protocol
+    var blocksPerRowData = Constants.blocks //required by protocol
+    var ballMagnitude: CGFloat = Constants.ballSpeedNormal //required by 2nd protocol
     var challengeMode = false
     var breakoutVC = BreakoutViewController()
 
     @IBOutlet weak var numRowsLabel: UILabel!
     @IBOutlet weak var numBlocksLabel: UILabel!
+    @IBOutlet weak var ballSpeedLabel: UILabel!
     
     //MARK: Actions
     
@@ -69,6 +71,24 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
         breakoutVC.didUpdateAnything = true
     }
     
+    @IBAction func ballSpeed(sender: UIStepper) {
+        let ballSpeed = Int(sender.value)
+        switch ballSpeed {
+        case 1:
+            ballSpeedLabel.text = "Slow"
+            ballMagnitude = Constants.ballSpeedSlow
+        case 2:
+            ballSpeedLabel.text = "Normal"
+            ballMagnitude = Constants.ballSpeedNormal
+        case 3:
+            ballSpeedLabel.text = "Fast"
+            ballMagnitude = Constants.ballSpeedFast
+        default: break
+        }
+        //breakoutVC.didUpdateAnything = true
+    }
+
+    
     override func viewDidAppear(animated: Bool) {
         breakoutVC.didUpdateAnything = false
     }
@@ -80,7 +100,9 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource {
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
             breakoutVC = bvc
             breakoutVC.dataSource = self
+            breakoutVC.behavior.dataSource = self
         }
+        
     }
 
     override func didReceiveMemoryWarning() {
