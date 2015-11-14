@@ -26,6 +26,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let circleToBallRatio: CGFloat = 1
         static let defaultRows = 4
         static let defaultBlocks = 5
+        static let paddleFromBottomOffset: CGFloat = 1
     }
     
     private enum gameOver {
@@ -62,6 +63,10 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     var paddle = UIView()
     var ball = UIView()
     var animatorNotSet = true
+    
+    let paddleGravity = UIGravityBehavior()
+    let paddleCollider = UICollisionBehavior()
+    
     var behavior = BreakoutBehavior()
     var ballCenter = CGPoint() {
         didSet {
@@ -93,7 +98,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 gesture.setTranslation(CGPointZero, inView: gameView)
                 behavior.removeBoundary("paddle")
                 behavior.addBoundary("paddle", path: createBoundary(paddle))
-            //  animator.updateItemUsingCurrentState(paddle)
+                animator.updateItemUsingCurrentState(paddle)
             }
         case .Ended: break
         default: break
@@ -106,7 +111,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         if let collidedBoundary = identifier as? String {
-        //  print("collided with \(collidedBoundary)")
             if let collidedInt = Int(collidedBoundary) {
                 let collided = "\(collidedInt)"
                 if let block = blocks[collided] {
@@ -116,7 +120,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                     } else {
                         behavior.removeBoundaryWithIdentifier(collided)
                         behavior.removeItem(block)
-                        blocks[collided] = nil  //moved to here from completion closure which fixed the "ghost" boundaries that sometimes happened when a box was disappearing during a rotation transition
+                        blocks[collided] = nil
                         UIView.animateWithDuration(0.5, animations: { () -> Void in
                             block.backgroundColor = UIColor.blueColor()
                             block.alpha = 0
@@ -154,7 +158,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 index++
             }
         }
-    //  print("\(numboxes) updated")
     }
     
     private func placeBall() {
@@ -162,18 +165,16 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         let yLocation = gameView.frame.maxY - paddle.frame.height - 2 * Constants.ballRadius
         ball.frame.size = CGSize(width: Constants.ballRadius * 2, height: Constants.ballRadius * 2)
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
-    //  ball.backgroundColor = UIColor.blackColor()
+        //ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
         let xLocation = gameView.frame.midX - paddleWidth / 2
-        let yLocation = gameView.frame.maxY - paddle.frame.height
+        let yLocation = gameView.frame.maxY - paddle.frame.height - Constants.paddleFromBottomOffset
         paddle.frame.size.height = Constants.paddleHeight
         paddle.frame.size.width = paddleWidth
         paddle.frame.origin = CGPoint(x: xLocation, y: yLocation)
         paddle.backgroundColor = UIColor.greenColor()
-        behavior.removeBoundary("paddle")
-        behavior.addBoundary("paddle", path: createBoundary(paddle))
     }
     
     private func setupBoxes() {
@@ -199,7 +200,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
                 alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
                     self.reset()
+                    self.clearAnimator()
                     self.prepareUI()
+                    self.setupAnimator()
                 }))
                 presentViewController(alert, animated: true, completion: nil)
             case .Win:
@@ -207,10 +210,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
                 alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
                     self.reset()
+                    self.clearAnimator()
                     self.prepareUI()
+                    self.setupAnimator()
                 }))
                 presentViewController(alert, animated: true, completion: nil)
-            //  print(self.presentedViewController)
             }
         }
     }
@@ -222,35 +226,44 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         blocks.removeAll()
         blocksChallengeSetting.removeAll()
         setupBoxes()
-        gameView.addSubview(paddle)
-        gameView.addSubview(ball)
-        placePaddle()
-        updateBlockPositions()
-        animator.removeAllBehaviors()
-        animator.addBehavior(behavior)
-        behavior.removeItemFromBehaviors(ball)
-        placeBall()
-        ballCenter = ball.center
-        behavior.addBallToBehaviors(ball)
     }
     
-    private func prepareUI() {
+    private func clearAnimator() {
         behavior.removeBoundary("leftwall")
         behavior.removeBoundary("topwall")
         behavior.removeBoundary("rightwall")
         behavior.removeBoundary("bottomwall")
-        //  print(behavior.bounceCollider.boundaryIdentifiers)
+        behavior.removeBoundary("paddle")
+        paddleGravity.removeItem(paddle)
+        paddleCollider.removeItem(paddle)
+        behavior.removeItemFromBehaviors(ball)
+        animator.removeAllBehaviors()
+    }
+    
+    private func prepareUI() {
+        ball.removeFromSuperview()
+        paddle.removeFromSuperview()
+        gameView.addSubview(ball)
+        gameView.addSubview(paddle)
         placePaddle()
         updateBlockPositions()
-        behavior.removeItemFromBehaviors(ball)
         placeBall()
         ballCenter = ball.center
+    }
+    
+    private func setupAnimator() {
+        animator.updateItemUsingCurrentState(gameView)
+        animator.addBehavior(behavior)
+        animator.addBehavior(paddleGravity)
+        animator.addBehavior(paddleCollider)
+        paddleCollider.translatesReferenceBoundsIntoBoundary = true
+  //      paddleCollider.addItem(paddle)
         behavior.addBallToBehaviors(ball)
+        behavior.addBoundary("paddle", path: createBoundary(paddle))
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
         behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        animator.updateItemUsingCurrentState(gameView)
     }
     
     private func createBoundary(view: UIView) -> (UIBezierPath) {
@@ -261,70 +274,72 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad")
         let center = NSNotificationCenter.defaultCenter()
         let notificationQueue = NSOperationQueue.mainQueue()
         let receiver = behavior
         center.addObserverForName(BallNotification.outNotification, object: receiver, queue: notificationQueue) { (NSNotification) -> Void in
-           // print("OUT!")
             self.showGameOver(.Lose)
         }
         center.addObserverForName(BallNotification.newCenter, object: receiver, queue: notificationQueue) { (notification) -> Void in
             if let center = notification.userInfo?[BallNotification.key] as? NSValue {
                 self.ballCenter = center.CGPointValue()
-                //print("the new center is \(self.ballCenter)")
             }
         }
-        setupBoxes()
-        gameView.addSubview(paddle)
-        gameView.addSubview(ball)
         behavior.bounceCollider.collisionDelegate = self
+        reset()
     }
     
-    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
-        // print("switched! \(gameView.bounds)")
+    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
+     //   paddleGravity.addItem(paddle)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-   //     print(didUpdateAnything)
+        print("viewDidLayoutSubviews")
         if didUpdateAnything == true {
             reset()
+            clearAnimator()
             prepareUI()
+            setupAnimator()
             didUpdateAnything = false
         } else {
+            clearAnimator()
             prepareUI()
+            setupAnimator()
         }
     }
     
     override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        if animatorNotSet {
-            animator.removeAllBehaviors()
-            animator.addBehavior(behavior)
-            animatorNotSet = false
-        }
-        
+        print("viewWillAppear")
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-//        AppDelegate.Motion.Manager.stopAccelerometerUpdates()
+        print("viewWillDisappear")
+        AppDelegate.Motion.Manager.stopAccelerometerUpdates()
     }
     
     override func viewDidAppear(animated: Bool) {
+       super.viewDidAppear(animated)
+        print("viewDidAppear")
+
+//        paddleGravity.addItem(paddle)
+        
 //        let motionManager = AppDelegate.Motion.Manager
 //        if motionManager.accelerometerAvailable {
 //            motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
-//                print("look")
+//                if let accelData = data {
+//                    self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: -accelData.acceleration.y)
+//                }
 //            })
 //        }
     }
     
-    //stops and resets the ball when the settings tab is opened up
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
+        print("viewDidDisappear")
         animator.removeAllBehaviors()
-        animatorNotSet = true
     }
     
     override func didReceiveMemoryWarning() {

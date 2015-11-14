@@ -27,7 +27,6 @@ class BreakoutBehavior: UIDynamicBehavior {
     var dataSource: BallSettingsDataSource?
     
     var bounceCollider = UICollisionBehavior()
-    var gravity = UIGravityBehavior()
     var push = UIPushBehavior()
     var magnitude: CGFloat = 0.065
     var angle: CGFloat {

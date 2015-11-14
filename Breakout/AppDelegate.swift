@@ -15,10 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-//    struct Motion {
-//        static let Manager = CMMotionManager()
-//    
-//    }
+    struct Motion {
+        static let Manager = CMMotionManager()
+    
+    }
 
 }
 
