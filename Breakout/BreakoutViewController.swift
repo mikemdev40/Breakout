@@ -57,14 +57,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
 
     var blocksPerRow: CGFloat {
         if let blocks = dataSource?.blocksPerRowData {
-          //  print("datasource blocks")
             return CGFloat(blocks)
         } else {
             if let blocks = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.blocksPerRowKey) as? Float {
-          //      print("UserSettings blocks")
                 return CGFloat(blocks)
             } else {
-          //      print("default blocks")
                 return CGFloat(Constants.defaultBlocks)
             }
         }
@@ -72,14 +69,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     var numberOfRows: CGFloat {
         if let rows = dataSource?.numberOfRowsData {
-          //  print("dataSource Rows")
             return CGFloat(rows)
         } else {
             if let rows = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.numRowsKey) as? Float {
-          //      print("UserSettings Rows")
                 return CGFloat(rows)
             } else {
-          //      print("default rows")
                 return CGFloat(Constants.defaultRows)
             }
         }
@@ -157,11 +151,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                     let collided = "\(collidedInt)"
                     if let block = blocks[collided] {
                         if blocksChallengeSetting[collided] == true {
-                            //   print(collided)
                             block.backgroundColor = UIColor.yellowColor()
                             blocksChallengeSetting[collided] = false
                         } else {
-                            //    print("else! \(collided)")
                             behavior.removeBoundaryWithIdentifier(collided)
                             behavior.removeItem(block)
                             blocks[collided] = nil
@@ -234,18 +226,14 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             let block = UIView()
             gameView.addSubview(block)
             blocks["\(index)"] = block
-            //if dataSource?.challengeMode == true {
             if let cmode = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.challengeModeKey) as? Bool {
                 if cmode {
                     blocksChallengeSetting["\(index)"] = true
-                 //   print("settings: challenge mode ON")
                 } else {
                     blocksChallengeSetting["\(index)"] = false
-                 //   print("settings: challenge mode OFF")
                 }
             } else {
                 blocksChallengeSetting["\(index)"] = false
-              //  print("default: off")
             }
             index++
         }
