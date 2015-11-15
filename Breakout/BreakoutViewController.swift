@@ -95,7 +95,8 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
-        /*  CODE BELOW WORKED!
+        /*  CODE BELOW WORKED!  commented out because it doesn't work in conjunction with using core motion to place the paddle
+        
         switch gesture.state {
         case .Began: fallthrough
         case .Changed:
@@ -203,28 +204,27 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     private func showGameOver(end: gameOver) {
         if presentedViewController == nil {
+            var alert: UIAlertController
             switch end {
             case .Lose:
-                let alert = UIAlertController(title: "Game Over", message: "Try again?", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
-                alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
-                    self.reset()
-                    self.clearAnimator()
-                    self.prepareUI()
-                    self.setupAnimator()
-                }))
-                presentViewController(alert, animated: true, completion: nil)
+                alert = UIAlertController(title: "Game Over", message: "Try again?", preferredStyle: .Alert)
             case .Win:
-                let alert = UIAlertController(title: "YOU WIN!", message: "Play again?", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
-                alert.addAction(UIAlertAction(title: "Replay", style: .Cancel, handler: { (UIAlertAction) -> Void in
-                    self.reset()
-                    self.clearAnimator()
-                    self.prepareUI()
-                    self.setupAnimator()
-                }))
-                presentViewController(alert, animated: true, completion: nil)
+                alert = UIAlertController(title: "YOU WIN!", message: "Play again?", preferredStyle: .Alert)
             }
+            alert.addAction(UIAlertAction(title: "Reset", style: .Default, handler: { (UIAlertAction) -> Void in
+                self.reset()
+                self.clearAnimator()
+                self.prepareUI()
+                self.setupAnimator()
+            }))
+            alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (UIAlertAction) -> Void in
+                self.clearAnimator()
+                self.prepareUI()
+                self.setupAnimator()
+            }))
+            alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
+
+            presentViewController(alert, animated: true, completion: nil)
         }
     }
     
@@ -288,7 +288,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         let center = NSNotificationCenter.defaultCenter()
         let notificationQueue = NSOperationQueue.mainQueue()
         let receiver = behavior
@@ -351,7 +350,8 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             }
         }
         
-        /*  CODE BELOW WORKS!
+        /*  CODE BELOW WORKS!  but works INSTEAD of code above; code above is smoother and more responsive; if code below is uncommented, be sure to uncomment the paddleGravity statements above
+        
         if !motionManager.accelerometerActive {
             if motionManager.accelerometerAvailable {
                 motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
