@@ -337,8 +337,12 @@
                     <tabBarItem key="tabBarItem" title="" id="tPq-pi-Tr2"/>
                     <connections>
                         <outlet property="ballSpeedLabel" destination="O28-ah-7C7" id="6b2-10-kIP"/>
+                        <outlet property="ballSpeedOutlet" destination="w1g-9t-I94" id="9rz-md-vfY"/>
+                        <outlet property="blocksPerRowOutlet" destination="wsg-mf-alo" id="eQV-WG-JOv"/>
+                        <outlet property="challengeModeOutlet" destination="Kd2-Bb-bif" id="rFT-Vx-ZaH"/>
                         <outlet property="numBlocksLabel" destination="RFc-Zv-cSw" id="ey5-zD-3Bl"/>
                         <outlet property="numRowsLabel" destination="z3f-8b-Dg6" id="VIb-C2-Oog"/>
+                        <outlet property="numRowsSliderOutlet" destination="9xn-6K-9r3" id="6mv-Md-v9W"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pvw-ou-B5l" userLabel="First Responder" sceneMemberID="firstResponder"/>

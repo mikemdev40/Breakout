@@ -17,7 +17,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     struct Motion {
         static let Manager = CMMotionManager()
+    }
     
+    struct UserSettings {
+        static let settings = NSUserDefaults.standardUserDefaults()
+        static let numRowsKey = "User Setting: Number of Rows"
+        static var blocksPerRowKey = "User Setting: Blocks Per Row"
+        static var challengeModeKey = "User Setting: Challenge Mode"
+        static var ballSpeedKey = "User Setting: Ball Speed"
     }
 
 }

@@ -16,6 +16,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     struct Constants {
         static let rows = 4
         static let blocks = 5
+        static let challengeMode = false
         static let ballSpeedSlow: CGFloat = 0.025
         static let ballSpeedNormal: CGFloat = 0.04
         static let ballSpeedFast: CGFloat = 0.055
@@ -25,10 +26,16 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     
     var numberOfRowsData = Constants.rows //required by protocol
     var blocksPerRowData = Constants.blocks //required by protocol
+    var challengeMode = false //required by protocol
     var ballMagnitude: CGFloat = Constants.ballSpeedNormal //required by 2nd protocol
-    var challengeMode = false
     var breakoutVC = BreakoutViewController()
 
+
+    @IBOutlet weak var numRowsSliderOutlet: UISlider!
+    @IBOutlet weak var blocksPerRowOutlet: UIStepper!
+    @IBOutlet weak var challengeModeOutlet: UISwitch!
+    @IBOutlet weak var ballSpeedOutlet: UIStepper!
+    
     @IBOutlet weak var numRowsLabel: UILabel!
     @IBOutlet weak var numBlocksLabel: UILabel!
     @IBOutlet weak var ballSpeedLabel: UILabel!
@@ -47,6 +54,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         
         if numberOfRowsData != numRowsValue {
             breakoutVC.didUpdateAnything = true
+            AppDelegate.UserSettings.settings.setObject(numRowsValue, forKey: AppDelegate.UserSettings.numRowsKey)
         }
         
         numberOfRowsData = numRowsValue  //serving as the datasource for breakout VC, this updates value for breakout VC to take
@@ -62,6 +70,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         
         if blocksPerRowData != numBlocks {
             breakoutVC.didUpdateAnything = true
+            AppDelegate.UserSettings.settings.setObject(numBlocks, forKey: AppDelegate.UserSettings.blocksPerRowKey)
         }
         
         blocksPerRowData = numBlocks
@@ -70,6 +79,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     @IBAction func challengeSwitch(sender: UISwitch) {
         challengeMode = sender.on
         breakoutVC.didUpdateAnything = true
+        AppDelegate.UserSettings.settings.setObject(challengeMode, forKey: AppDelegate.UserSettings.challengeModeKey)
     }
     
     @IBAction func ballSpeed(sender: UIStepper) {
@@ -94,8 +104,22 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         breakoutVC.didUpdateAnything = false
     }
     
+    override func viewWillAppear(animated: Bool) {
+        
+    // setup the user's saved values
+        numRowsSliderOutlet.value = (AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.numRowsKey) as? Float) ?? Float(Constants.rows)
+        numRowsLabel.text = "\(Int(numRowsSliderOutlet.value))"
+        numberOfRowsData = Int(numRowsSliderOutlet.value)
+        blocksPerRowOutlet.value = (AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.blocksPerRowKey) as? Double) ?? Double(Constants.blocks)
+        numBlocksLabel.text = "\(Int(blocksPerRowOutlet.value))"
+        blocksPerRowData = Int(blocksPerRowOutlet.value)
+        challengeModeOutlet.on = (AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.challengeModeKey) as? Bool) ?? Constants.challengeMode
+        challengeMode = challengeModeOutlet.on
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("settings did load")
         // code below inspired by http://makeapppie.com/2015/02/04/swift-swift-tutorials-passing-data-in-tab-bar-controllers/
         // this allows us to connect the two VCs so that this one can serve as the datasource for the other
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
@@ -103,7 +127,6 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
             breakoutVC.dataSource = self
             breakoutVC.behavior.dataSource = self
         }
-        
     }
 
     override func didReceiveMemoryWarning() {

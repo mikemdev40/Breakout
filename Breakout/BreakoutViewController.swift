@@ -21,14 +21,14 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Constants
     private struct Constants {
+        static let defaultRows = 4
+        static let defaultBlocks = 5
         static let heightToWidthRatio: CGFloat = 2/3
         static let topIndentBeforeFirstRow: CGFloat = 20
         static let topPortionOfScreenForBlocks: CGFloat = 0.5
         static let paddleHeight: CGFloat = 15
         static let ballRadius: CGFloat = 5
         static let circleToBallRatio: CGFloat = 1
-        static let defaultRows = 4
-        static let defaultBlocks = 5
         static let paddleFromBottomOffset: CGFloat = 0
         static let paddleGravityMagnitude: CGFloat = 1
         static let fractionOfWidthThatEqualsPaddle: CGFloat = 0.2
@@ -42,27 +42,47 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Variables
     
-    var testModeWithBottomBoundary = false
+    var testModeWithBottomBoundary = true
     
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
     
     var paddleWidth: CGFloat {
         if let gameWidth = gameView?.frame.width {
-            return gameView.frame.width * Constants.fractionOfWidthThatEqualsPaddle
+            return gameWidth * Constants.fractionOfWidthThatEqualsPaddle
         } else {
             return Constants.defaultPaddleWidth
         }
     }
 
     var blocksPerRow: CGFloat {
-        let blocks = dataSource?.blocksPerRowData ?? Constants.defaultBlocks
-        return CGFloat(blocks)
+        if let blocks = dataSource?.blocksPerRowData {
+          //  print("datasource blocks")
+            return CGFloat(blocks)
+        } else {
+            if let blocks = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.blocksPerRowKey) as? Float {
+          //      print("UserSettings blocks")
+                return CGFloat(blocks)
+            } else {
+          //      print("default blocks")
+                return CGFloat(Constants.defaultBlocks)
+            }
+        }
     }
     
     var numberOfRows: CGFloat {
-        let blocks = dataSource?.numberOfRowsData ?? Constants.defaultRows
-        return CGFloat(blocks)
+        if let rows = dataSource?.numberOfRowsData {
+          //  print("dataSource Rows")
+            return CGFloat(rows)
+        } else {
+            if let rows = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.numRowsKey) as? Float {
+          //      print("UserSettings Rows")
+                return CGFloat(rows)
+            } else {
+          //      print("default rows")
+                return CGFloat(Constants.defaultRows)
+            }
+        }
     }
     
     var dataSource: GameViewDataSource?
@@ -82,6 +102,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     let paddleGravity = UIGravityBehavior()
     let paddleCollider = UICollisionBehavior()
     var behavior = BreakoutBehavior()
+    var collisionDidEnd = true
     
     var ballCenter = CGPoint() {
         didSet {
@@ -128,34 +149,45 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
-        if let collidedBoundary = identifier as? String {
-            if let collidedInt = Int(collidedBoundary) {
-                let collided = "\(collidedInt)"
-                if let block = blocks[collided] {
-                    if blocksChallengeSetting[collided] == true {
-                        block.backgroundColor = UIColor.yellowColor()
-                        blocksChallengeSetting[collided] = false
-                    } else {
-                        behavior.removeBoundaryWithIdentifier(collided)
-                        behavior.removeItem(block)
-                        blocks[collided] = nil
-                        UIView.animateWithDuration(0.5, animations: { () -> Void in
-                            block.backgroundColor = UIColor.blueColor()
-                            block.alpha = 0
-                            },
-                            completion: { [unowned self] (Bool) -> Void in
-                                block.removeFromSuperview()
-                                if self.blocks.count == 0 {
-                                    self.showGameOver(.Win)
-                                    if self.testModeWithBottomBoundary {
-                                        self.behavior.removeBoundary("bottomwall")
+        if collisionDidEnd {  //required to prevent the "double hit" that was sometimes detected, which turned the block yellow AND removed the block in a single hit; this work around works because a "double hit" registers TWO calls to this function BEFORE the first hit registers the "endedContactForItem" function below; IMPORTANT!! the endedContactForItem function is called for the yellow -> removed situation AFTER The 0.5 second animation, so it was necessary to place a "collisionDidEnd = true" statement in both places below (within the "else" and also within the endedContactForItem function)
+            
+            if let collidedBoundary = identifier as? String {
+                if let collidedInt = Int(collidedBoundary) {
+                    collisionDidEnd = false
+                    let collided = "\(collidedInt)"
+                    if let block = blocks[collided] {
+                        if blocksChallengeSetting[collided] == true {
+                            //   print(collided)
+                            block.backgroundColor = UIColor.yellowColor()
+                            blocksChallengeSetting[collided] = false
+                        } else {
+                            //    print("else! \(collided)")
+                            behavior.removeBoundaryWithIdentifier(collided)
+                            behavior.removeItem(block)
+                            blocks[collided] = nil
+                            collisionDidEnd = true
+                            UIView.animateWithDuration(0.5, animations: { () -> Void in
+                                block.backgroundColor = UIColor.blueColor()
+                                block.alpha = 0
+                                },
+                                completion: { [unowned self] (Bool) -> Void in
+                                    block.removeFromSuperview()
+                                    if self.blocks.count == 0 {
+                                        self.showGameOver(.Win)
+                                        if self.testModeWithBottomBoundary {
+                                            self.behavior.removeBoundary("bottomwall")
+                                        }
                                     }
-                                }
-                        })
+                                })
+                        }
                     }
                 }
             }
         }
+    }
+    
+    func collisionBehavior(behavior: UICollisionBehavior, endedContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?) {
+        collisionDidEnd = true
     }
     
     private func updateBlockPositions() {
@@ -184,7 +216,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         let yLocation = gameView.frame.maxY - paddle.frame.height - 2 * Constants.ballRadius
         ball.frame.size = CGSize(width: Constants.ballRadius * 2, height: Constants.ballRadius * 2)
         ball.frame.origin = CGPoint(x: xLocation, y: yLocation)
-        //ball.backgroundColor = UIColor.blackColor()
+      //  ball.backgroundColor = UIColor.blackColor()
     }
     
     private func placePaddle() {
@@ -202,10 +234,18 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             let block = UIView()
             gameView.addSubview(block)
             blocks["\(index)"] = block
-            if dataSource?.challengeMode == true {
-                blocksChallengeSetting["\(index)"] = true
+            //if dataSource?.challengeMode == true {
+            if let cmode = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.challengeModeKey) as? Bool {
+                if cmode {
+                    blocksChallengeSetting["\(index)"] = true
+                 //   print("settings: challenge mode ON")
+                } else {
+                    blocksChallengeSetting["\(index)"] = false
+                 //   print("settings: challenge mode OFF")
+                }
             } else {
                 blocksChallengeSetting["\(index)"] = false
+              //  print("default: off")
             }
             index++
         }
@@ -297,6 +337,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("breakout did load")
         let center = NSNotificationCenter.defaultCenter()
         let notificationQueue = NSOperationQueue.mainQueue()
         let receiver = behavior
