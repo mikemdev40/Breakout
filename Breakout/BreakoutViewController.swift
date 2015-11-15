@@ -6,6 +6,9 @@
 //  Copyright © 2015 MikeMiller. All rights reserved.
 //
 
+
+//CODE WRITTEN TO WORK ON BOTH PROTRAIT AND LANDSCAPE, BUT IN THIS VERSION IN WHICH THE CORE MOTION IS BEING USED TO CONTROL THE PADDLE, landscape was turned off in the settings panel to prevent the tilting of the phone when controlling the paddle to convert to a rotation accidentally
+
 import UIKit
 
 protocol GameViewDataSource {
@@ -26,7 +29,8 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let circleToBallRatio: CGFloat = 1
         static let defaultRows = 4
         static let defaultBlocks = 5
-        static let paddleFromBottomOffset: CGFloat = 1
+        static let paddleFromBottomOffset: CGFloat = 0
+        static let paddleGravityMagnitude: CGFloat = 1
     }
     
     private enum gameOver {
@@ -34,7 +38,14 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         case Lose
     }
     
-    // MARK: Adjustable Variables
+    // MARK: Variables
+    
+    var testModeWithBottomBoundary = false
+    
+    var verticalSpacing: CGFloat = 10
+    var horizontalSpacing: CGFloat = 10
+    var paddleWidth: CGFloat = 75
+
     var blocksPerRow: CGFloat {
         let blocks = dataSource?.blocksPerRowData ?? Constants.defaultBlocks
         return CGFloat(blocks)
@@ -44,11 +55,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         let blocks = dataSource?.numberOfRowsData ?? Constants.defaultRows
         return CGFloat(blocks)
     }
-    var verticalSpacing: CGFloat = 10
-    var horizontalSpacing: CGFloat = 10
-    var paddleWidth: CGFloat = 75
     
-    // MARK: Variables
     var dataSource: GameViewDataSource?
     
     @IBOutlet weak var gameView: GameView! {
@@ -62,12 +69,11 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     var blocksChallengeSetting = [String: Bool]()
     var paddle = UIView()
     var ball = UIView()
-    var animatorNotSet = true
     
     let paddleGravity = UIGravityBehavior()
     let paddleCollider = UICollisionBehavior()
-    
     var behavior = BreakoutBehavior()
+    
     var ballCenter = CGPoint() {
         didSet {
             let path = UIBezierPath(arcCenter: ballCenter, radius: (Constants.ballRadius * Constants.circleToBallRatio), startAngle: 0, endAngle: CGFloat(2*M_PI), clockwise: true)
@@ -89,6 +95,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
+        /*  CODE BELOW WORKED!
         switch gesture.state {
         case .Began: fallthrough
         case .Changed:
@@ -103,6 +110,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         case .Ended: break
         default: break
         }
+        */
     }
     
     func didTap(gesture: UIGestureRecognizer) {
@@ -126,11 +134,12 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                             block.alpha = 0
                             },
                             completion: { [unowned self] (Bool) -> Void in
-                            //  print("block removed: \(collided)")
                                 block.removeFromSuperview()
                                 if self.blocks.count == 0 {
                                     self.showGameOver(.Win)
-                                    self.behavior.removeBoundary("bottomwall")
+                                    if self.testModeWithBottomBoundary {
+                                        self.behavior.removeBoundary("bottomwall")
+                                    }
                                 }
                         })
                     }
@@ -232,7 +241,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         behavior.removeBoundary("leftwall")
         behavior.removeBoundary("topwall")
         behavior.removeBoundary("rightwall")
-        behavior.removeBoundary("bottomwall")
+        if testModeWithBottomBoundary {
+            behavior.removeBoundary("bottomwall")
+        }
         behavior.removeBoundary("paddle")
         paddleGravity.removeItem(paddle)
         paddleCollider.removeItem(paddle)
@@ -255,15 +266,18 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         animator.updateItemUsingCurrentState(gameView)
         animator.addBehavior(behavior)
         animator.addBehavior(paddleGravity)
+        paddleGravity.magnitude = Constants.paddleGravityMagnitude
         animator.addBehavior(paddleCollider)
         paddleCollider.translatesReferenceBoundsIntoBoundary = true
-  //      paddleCollider.addItem(paddle)
+   //     paddleCollider.addItem(paddle)
         behavior.addBallToBehaviors(ball)
         behavior.addBoundary("paddle", path: createBoundary(paddle))
         behavior.addBoundary("leftwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY))
         behavior.addBoundary("topwall", start: gameView.frame.origin, end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y))
         behavior.addBoundary("rightwall", start: CGPoint(x: gameView.frame.maxX, y: gameView.frame.origin.y), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
-        behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+        if testModeWithBottomBoundary {
+            behavior.addBoundary("bottomwall", start: CGPoint(x: gameView.frame.origin.x, y: gameView.frame.maxY), end: CGPoint(x: gameView.frame.maxX, y: gameView.frame.maxY))
+        }
     }
     
     private func createBoundary(view: UIView) -> (UIBezierPath) {
@@ -291,12 +305,12 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-     //   paddleGravity.addItem(paddle)
+//        paddleGravity.magnitude = Constants.paddleGravityMagnitude
+//        paddleGravity.addItem(paddle)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        print("viewDidLayoutSubviews")
         if didUpdateAnything == true {
             reset()
             clearAnimator()
@@ -310,36 +324,54 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
-        print("viewWillAppear")
-    }
-    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        print("viewWillDisappear")
         AppDelegate.Motion.Manager.stopAccelerometerUpdates()
+        animator.removeAllBehaviors()
     }
     
     override func viewDidAppear(animated: Bool) {
        super.viewDidAppear(animated)
-        print("viewDidAppear")
 
 //        paddleGravity.addItem(paddle)
+//        paddleGravity.magnitude = Constants.paddleGravityMagnitude
         
-//        let motionManager = AppDelegate.Motion.Manager
-//        if motionManager.accelerometerAvailable {
-//            motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
-//                if let accelData = data {
-//                    self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: -accelData.acceleration.y)
-//                }
-//            })
-//        }
+        let motionManager = AppDelegate.Motion.Manager
+        if !motionManager.deviceMotionActive {
+            if motionManager.deviceMotionAvailable {
+                 motionManager.startDeviceMotionUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { [unowned self] (data, error) -> Void in
+                    if let motionData = data {
+                        let roll = min(max(motionData.attitude.roll, -0.3), 0.3)
+                        let mapping = (roll + 0.3)/0.6
+                        self.paddle.frame.origin.x = CGFloat(mapping) * (self.gameView.frame.width - self.paddle.frame.width)
+                        self.behavior.removeBoundary("paddle")
+                        self.behavior.addBoundary("paddle", path: self.createBoundary(self.paddle))
+                    }
+                })
+            }
+        }
+        
+        /*  CODE BELOW WORKS!
+        if !motionManager.accelerometerActive {
+            if motionManager.accelerometerAvailable {
+                motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
+                    if let accelData = data {
+                        self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: 0)
+                        //self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: -accelData.acceleration.y)
+                    }
+                })
+            }
+        }
+        
+        paddleGravity.action = { [unowned self] in
+            self.behavior.removeBoundary("paddle")
+            self.behavior.addBoundary("paddle", path: self.createBoundary(self.paddle))
+        }
+        */
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        print("viewDidDisappear")
-        animator.removeAllBehaviors()
     }
     
     override func didReceiveMemoryWarning() {

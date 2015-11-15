@@ -28,7 +28,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     var bounceCollider = UICollisionBehavior()
     var push = UIPushBehavior()
-    var magnitude: CGFloat = 0.065
+    var magnitude: CGFloat = 0.04
     var angle: CGFloat {
         return randomAngle()
     }

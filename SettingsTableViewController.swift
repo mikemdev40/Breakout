@@ -17,8 +17,8 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         static let rows = 4
         static let blocks = 5
         static let ballSpeedSlow: CGFloat = 0.025
-        static let ballSpeedNormal: CGFloat = 0.05
-        static let ballSpeedFast: CGFloat = 0.075
+        static let ballSpeedNormal: CGFloat = 0.04
+        static let ballSpeedFast: CGFloat = 0.055
     }
     
     //MARK: Variables
