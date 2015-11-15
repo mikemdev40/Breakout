@@ -31,6 +31,8 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let defaultBlocks = 5
         static let paddleFromBottomOffset: CGFloat = 0
         static let paddleGravityMagnitude: CGFloat = 1
+        static let fractionOfWidthThatEqualsPaddle: CGFloat = 0.2
+        static let defaultPaddleWidth: CGFloat = 75
     }
     
     private enum gameOver {
@@ -44,7 +46,14 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
-    var paddleWidth: CGFloat = 75
+    
+    var paddleWidth: CGFloat {
+        if let gameWidth = gameView?.frame.width {
+            return gameView.frame.width * Constants.fractionOfWidthThatEqualsPaddle
+        } else {
+            return Constants.defaultPaddleWidth
+        }
+    }
 
     var blocksPerRow: CGFloat {
         let blocks = dataSource?.blocksPerRowData ?? Constants.defaultBlocks
