@@ -273,41 +273,36 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ball Speed:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Baa-UE-8aP">
-                                                    <rect key="frame" x="8" y="19.5" width="86" height="20.5"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Normal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O28-ah-7C7">
-                                                    <rect key="frame" x="251" y="14" width="88" height="26.5"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="88" id="yZF-5I-PYV"/>
-                                                    </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" continuous="NO" value="2" minimumValue="1" maximumValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="w1g-9t-I94">
-                                                    <rect key="frame" x="143" y="12" width="94" height="29"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="94" id="5zf-Cb-aKg"/>
-                                                    </constraints>
-                                                    <connections>
-                                                        <action selector="ballSpeed:" destination="Pre-xn-sJb" eventType="valueChanged" id="LaJ-1n-Ig7"/>
-                                                    </connections>
-                                                </stepper>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="0O0-hS-XCu">
+                                                    <rect key="frame" x="8" y="8" width="271" height="44"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ball Speed:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Baa-UE-8aP">
+                                                            <rect key="frame" x="0.0" y="12" width="86" height="20.5"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" continuous="NO" value="2" minimumValue="1" maximumValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="w1g-9t-I94">
+                                                            <rect key="frame" x="96" y="7.5" width="94" height="29"/>
+                                                            <connections>
+                                                                <action selector="ballSpeed:" destination="Pre-xn-sJb" eventType="valueChanged" id="LaJ-1n-Ig7"/>
+                                                            </connections>
+                                                        </stepper>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Normal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O28-ah-7C7">
+                                                            <rect key="frame" x="200" y="9" width="71" height="26.5"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="O28-ah-7C7" firstAttribute="centerY" secondItem="qWc-IZ-ich" secondAttribute="centerY" id="DfI-gC-XLB"/>
-                                                <constraint firstItem="w1g-9t-I94" firstAttribute="centerY" secondItem="Baa-UE-8aP" secondAttribute="centerY" id="GPH-fs-v1g"/>
-                                                <constraint firstItem="Baa-UE-8aP" firstAttribute="centerY" secondItem="qWc-IZ-ich" secondAttribute="centerY" id="LND-MM-rl5"/>
-                                                <constraint firstItem="O28-ah-7C7" firstAttribute="leading" secondItem="w1g-9t-I94" secondAttribute="trailing" constant="14.5" id="Vgg-dw-Znf"/>
-                                                <constraint firstAttribute="leadingMargin" secondItem="Baa-UE-8aP" secondAttribute="leading" id="aVA-XT-Qab"/>
-                                                <constraint firstItem="O28-ah-7C7" firstAttribute="centerY" secondItem="w1g-9t-I94" secondAttribute="centerY" id="eGS-f8-kBG"/>
-                                                <constraint firstItem="w1g-9t-I94" firstAttribute="leading" secondItem="Baa-UE-8aP" secondAttribute="trailing" constant="49" id="emZ-qM-xHk"/>
-                                            </constraints>
                                         </tableViewCellContentView>
+                                        <constraints>
+                                            <constraint firstItem="0O0-hS-XCu" firstAttribute="top" secondItem="hj8-uQ-Jpp" secondAttribute="top" constant="8" id="93Z-49-mRg"/>
+                                            <constraint firstItem="0O0-hS-XCu" firstAttribute="leading" secondItem="hj8-uQ-Jpp" secondAttribute="leading" constant="8" id="O2d-T2-Pzx"/>
+                                            <constraint firstAttribute="bottom" secondItem="0O0-hS-XCu" secondAttribute="bottom" constant="8" id="PBu-QN-0pN"/>
+                                        </constraints>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
