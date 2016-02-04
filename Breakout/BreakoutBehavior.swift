@@ -78,7 +78,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     }
     
     func addBallToBehaviors(view: UIView) {
-        bounciness.action = {
+        bounciness.action = { [unowned self] in
             self.ballCenter = view.center
         }
         bounciness.addItem(view)
@@ -111,7 +111,6 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(bounceCollider)
         addChildBehavior(bounciness)
         center = NSNotificationCenter.defaultCenter()
-        //     bounceCollider.translatesReferenceBoundsIntoBoundary = true
     }
     
 }

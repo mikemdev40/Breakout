@@ -143,40 +143,52 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Number of Rows:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GLW-ZL-SeT">
-                                                    <rect key="frame" x="8" y="11" width="131.5" height="37.5"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="4" minValue="2" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="9xn-6K-9r3">
-                                                    <rect key="frame" x="156" y="15" width="352" height="31"/>
-                                                    <connections>
-                                                        <action selector="numRowsSlider:" destination="Pre-xn-sJb" eventType="valueChanged" id="NtP-m3-MHn"/>
-                                                    </connections>
-                                                </slider>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z3f-8b-Dg6">
-                                                    <rect key="frame" x="532" y="19" width="60" height="21.5"/>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="whu-JR-HM4">
+                                                    <rect key="frame" x="8" y="8" width="584" height="44"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Number of Rows:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GLW-ZL-SeT">
+                                                            <rect key="frame" x="0.0" y="12" width="132" height="21"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <slider opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="700" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="4" minValue="2" maxValue="6" translatesAutoresizingMaskIntoConstraints="NO" id="9xn-6K-9r3">
+                                                            <rect key="frame" x="140" y="7" width="377" height="31"/>
+                                                            <connections>
+                                                                <action selector="numRowsSlider:" destination="Pre-xn-sJb" eventType="valueChanged" id="NtP-m3-MHn"/>
+                                                            </connections>
+                                                        </slider>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z3f-8b-Dg6">
+                                                            <rect key="frame" x="524" y="11" width="60" height="22"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="60" id="T42-nw-CO2"/>
+                                                                <constraint firstAttribute="height" constant="21.5" id="wpX-w7-ZMv"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="60" id="T42-nw-CO2"/>
-                                                        <constraint firstAttribute="height" constant="21.5" id="wpX-w7-ZMv"/>
+                                                        <constraint firstItem="z3f-8b-Dg6" firstAttribute="leading" secondItem="9xn-6K-9r3" secondAttribute="trailing" id="Jcr-xW-3ZX"/>
+                                                        <constraint firstItem="9xn-6K-9r3" firstAttribute="leading" secondItem="GLW-ZL-SeT" secondAttribute="trailing" id="QMy-Na-5TS"/>
+                                                        <constraint firstItem="9xn-6K-9r3" firstAttribute="leading" secondItem="GLW-ZL-SeT" secondAttribute="trailing" constant="10" id="SD4-pC-l4C"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="QMy-Na-5TS"/>
+                                                            <exclude reference="Jcr-xW-3ZX"/>
+                                                        </mask>
+                                                    </variation>
+                                                </stackView>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="z3f-8b-Dg6" firstAttribute="centerY" secondItem="2cb-Dn-O7j" secondAttribute="centerY" id="0RN-8x-F6d"/>
-                                                <constraint firstItem="z3f-8b-Dg6" firstAttribute="leading" secondItem="9xn-6K-9r3" secondAttribute="trailing" constant="26" id="4GB-iF-iFd"/>
-                                                <constraint firstItem="GLW-ZL-SeT" firstAttribute="centerY" secondItem="2cb-Dn-O7j" secondAttribute="centerY" id="5bE-71-IbR"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="z3f-8b-Dg6" secondAttribute="trailing" id="8lD-6s-bjh"/>
-                                                <constraint firstItem="GLW-ZL-SeT" firstAttribute="leading" secondItem="2cb-Dn-O7j" secondAttribute="leadingMargin" id="BmM-rh-daJ"/>
-                                                <constraint firstItem="9xn-6K-9r3" firstAttribute="centerY" secondItem="2cb-Dn-O7j" secondAttribute="centerY" id="ZTf-Ok-aJR"/>
-                                                <constraint firstItem="GLW-ZL-SeT" firstAttribute="top" secondItem="2cb-Dn-O7j" secondAttribute="topMargin" constant="3" id="avL-W2-Gza"/>
-                                                <constraint firstItem="9xn-6K-9r3" firstAttribute="leading" secondItem="GLW-ZL-SeT" secondAttribute="trailing" constant="18.5" id="dPr-bM-rBk"/>
-                                            </constraints>
                                         </tableViewCellContentView>
+                                        <constraints>
+                                            <constraint firstItem="whu-JR-HM4" firstAttribute="top" secondItem="DB0-2W-PAf" secondAttribute="top" constant="8" id="2ld-Wg-89k"/>
+                                            <constraint firstAttribute="trailing" secondItem="whu-JR-HM4" secondAttribute="trailing" constant="8" id="8je-Td-hQj"/>
+                                            <constraint firstItem="whu-JR-HM4" firstAttribute="leading" secondItem="DB0-2W-PAf" secondAttribute="leading" constant="8" id="ACH-rz-xTS"/>
+                                            <constraint firstAttribute="bottom" secondItem="whu-JR-HM4" secondAttribute="bottom" constant="8" id="Jhc-S6-hnv"/>
+                                        </constraints>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="60" id="rih-VM-gil">
                                         <rect key="frame" x="0.0" y="299.5" width="600" height="60"/>
