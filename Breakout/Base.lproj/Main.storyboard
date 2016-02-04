@@ -67,7 +67,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="59.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" misplaced="YES" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="mUO-WL-seR">
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="mUO-WL-seR">
                                                     <rect key="frame" x="8" y="8" width="289" height="44"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Paddle Control:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XI4-Ra-TLw">
@@ -305,6 +305,33 @@
                                             <constraint firstItem="0O0-hS-XCu" firstAttribute="leading" secondItem="hj8-uQ-Jpp" secondAttribute="leading" constant="8" id="O2d-T2-Pzx"/>
                                             <constraint firstAttribute="bottom" secondItem="0O0-hS-XCu" secondAttribute="bottom" constant="8" id="PBu-QN-0pN"/>
                                         </constraints>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="About" id="qvx-53-qzQ">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="60" id="Dil-67-KPK">
+                                        <rect key="frame" x="0.0" y="580" width="600" height="60"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Dil-67-KPK" id="Pho-6B-wLF">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EZN-gs-7bR">
+                                                    <rect key="frame" x="8" y="-1" width="584" height="60"/>
+                                                    <string key="text">Developed by Mike Miller as Assignment 5 of Standord's "Developing iOS 8 Apps with Swift" course.  Tab bar icons by Freepik from www.flaticon.com</string>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="EZN-gs-7bR" firstAttribute="top" secondItem="Pho-6B-wLF" secondAttribute="topMargin" constant="-9" id="0Qk-e4-N9k"/>
+                                                <constraint firstItem="EZN-gs-7bR" firstAttribute="trailing" secondItem="Pho-6B-wLF" secondAttribute="trailingMargin" id="4g1-Ld-zZS"/>
+                                                <constraint firstItem="EZN-gs-7bR" firstAttribute="centerY" secondItem="Pho-6B-wLF" secondAttribute="centerY" id="fcI-XH-nMo"/>
+                                                <constraint firstItem="EZN-gs-7bR" firstAttribute="leading" secondItem="Pho-6B-wLF" secondAttribute="leadingMargin" id="gNh-sB-frN"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
