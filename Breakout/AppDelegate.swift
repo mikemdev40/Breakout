@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         static var blocksPerRowKey = "User Setting: Blocks Per Row"
         static var challengeModeKey = "User Setting: Challenge Mode"
         static var ballSpeedKey = "User Setting: Ball Speed"
+        static var paddleControl = "Paddle Control Key"
     }
 
 }

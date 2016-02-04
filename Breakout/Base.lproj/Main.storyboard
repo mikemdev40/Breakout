@@ -79,9 +79,12 @@
                                                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eYs-zr-ADs">
                                                             <rect key="frame" x="128" y="8" width="161" height="29"/>
                                                             <segments>
-                                                                <segment title="TIlt Device"/>
+                                                                <segment title="Tilt Device"/>
                                                                 <segment title="Use Finger"/>
                                                             </segments>
+                                                            <connections>
+                                                                <action selector="selectPaddleControl:" destination="Pre-xn-sJb" eventType="valueChanged" id="HT5-gf-CTG"/>
+                                                            </connections>
                                                         </segmentedControl>
                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="hu3-sF-p4s">
                                                             <rect key="frame" x="299" y="4" width="108" height="36.5"/>
@@ -336,6 +339,7 @@
                         <outlet property="numBlocksLabel" destination="RFc-Zv-cSw" id="ey5-zD-3Bl"/>
                         <outlet property="numRowsLabel" destination="z3f-8b-Dg6" id="VIb-C2-Oog"/>
                         <outlet property="numRowsSliderOutlet" destination="9xn-6K-9r3" id="6mv-Md-v9W"/>
+                        <outlet property="paddleControlOutlet" destination="eYs-zr-ADs" id="oaR-qS-RYb"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pvw-ou-B5l" userLabel="First Responder" sceneMemberID="firstResponder"/>

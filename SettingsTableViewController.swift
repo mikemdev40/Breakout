@@ -20,6 +20,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         static let ballSpeedSlow: CGFloat = 0.025
         static let ballSpeedNormal: CGFloat = 0.04
         static let ballSpeedFast: CGFloat = 0.055
+        static let defaultPaddleControl = 0
     }
     
     //MARK: Variables
@@ -29,18 +30,29 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     var challengeMode = false //required by protocol
     var ballMagnitude: CGFloat = Constants.ballSpeedNormal //required by 2nd protocol
     var breakoutVC = BreakoutViewController()
-
+    var paddleControl = 0
 
     @IBOutlet weak var numRowsSliderOutlet: UISlider!
     @IBOutlet weak var blocksPerRowOutlet: UIStepper!
     @IBOutlet weak var challengeModeOutlet: UISwitch!
     @IBOutlet weak var ballSpeedOutlet: UIStepper!
+    @IBOutlet weak var paddleControlOutlet: UISegmentedControl!
     
     @IBOutlet weak var numRowsLabel: UILabel!
     @IBOutlet weak var numBlocksLabel: UILabel!
     @IBOutlet weak var ballSpeedLabel: UILabel!
     
     //MARK: Actions
+    
+    
+    @IBAction func selectPaddleControl(sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            paddleControl = 0
+        } else {
+            paddleControl = 1
+        }
+        AppDelegate.UserSettings.settings.setObject(paddleControl, forKey: AppDelegate.UserSettings.paddleControl)
+    }
     
     @IBAction func numRowsSlider(sender: UISlider) {
         
@@ -58,7 +70,6 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         }
         
         numberOfRowsData = numRowsValue  //serving as the datasource for breakout VC, this updates value for breakout VC to take
-       // print(numberOfRowsData)
     }
     
 
@@ -115,6 +126,8 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         blocksPerRowData = Int(blocksPerRowOutlet.value)
         challengeModeOutlet.on = (AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.challengeModeKey) as? Bool) ?? Constants.challengeMode
         challengeMode = challengeModeOutlet.on
+        paddleControlOutlet.selectedSegmentIndex = (AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.paddleControl) as? Int) ?? Constants.defaultPaddleControl
+        paddleControl = paddleControlOutlet.selectedSegmentIndex
     }
     
     override func viewDidLoad() {

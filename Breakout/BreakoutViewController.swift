@@ -15,6 +15,7 @@ protocol GameViewDataSource {
     var numberOfRowsData: Int { get }
     var blocksPerRowData: Int { get }
     var challengeMode: Bool { get }
+    var paddleControl: Int { get }
 }
 
 class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
@@ -33,6 +34,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let paddleGravityMagnitude: CGFloat = 1
         static let fractionOfWidthThatEqualsPaddle: CGFloat = 0.2
         static let defaultPaddleWidth: CGFloat = 75
+        static let defaultPaddleType = 1
     }
     
     private enum gameOver {
@@ -42,7 +44,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Variables
     
-    var testModeWithBottomBoundary = true
+    var testModeWithBottomBoundary = false
     
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
@@ -75,6 +77,18 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 return CGFloat(rows)
             } else {
                 return CGFloat(Constants.defaultRows)
+            }
+        }
+    }
+
+    var paddleControlType: Int {
+        if let type = dataSource?.paddleControl {
+            return type
+        } else {
+            if let type = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.paddleControl) as? Int {
+                return type
+            } else {
+                return Constants.defaultPaddleType
             }
         }
     }
@@ -119,23 +133,22 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Methods
     @IBAction func scrollPaddle(gesture: UIPanGestureRecognizer) {
-        /*  CODE BELOW WORKED!  commented out because it doesn't work in conjunction with using core motion to place the paddle
-        
-        switch gesture.state {
-        case .Began: fallthrough
-        case .Changed:
-            let translation = gesture.translationInView(gameView)
-            if (paddle.frame.origin.x + translation.x) > gameView.frame.minX && (paddle.frame.origin.x + paddleWidth + translation.x) < gameView.frame.maxX {
-                paddle.frame.origin.x += translation.x
-                gesture.setTranslation(CGPointZero, inView: gameView)
-                behavior.removeBoundary("paddle")
-                behavior.addBoundary("paddle", path: createBoundary(paddle))
-                animator.updateItemUsingCurrentState(paddle)
+        if paddleControlType == 1 {
+            switch gesture.state {
+            case .Began: fallthrough
+            case .Changed:
+                let translation = gesture.translationInView(gameView)
+                if (paddle.frame.origin.x + translation.x) > gameView.frame.minX && (paddle.frame.origin.x + paddleWidth + translation.x) < gameView.frame.maxX {
+                    paddle.frame.origin.x += translation.x
+                    gesture.setTranslation(CGPointZero, inView: gameView)
+                    behavior.removeBoundary("paddle")
+                    behavior.addBoundary("paddle", path: createBoundary(paddle))
+                    animator.updateItemUsingCurrentState(paddle)
+                }
+            case .Ended: break
+            default: break
             }
-        case .Ended: break
-        default: break
         }
-        */
     }
     
     func didTap(gesture: UIGestureRecognizer) {
@@ -342,8 +355,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-//        paddleGravity.magnitude = Constants.paddleGravityMagnitude
-//        paddleGravity.addItem(paddle)
+
     }
     
     override func viewDidLayoutSubviews() {
@@ -369,44 +381,24 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-       super.viewDidAppear(animated)
-
-//        paddleGravity.addItem(paddle)
-//        paddleGravity.magnitude = Constants.paddleGravityMagnitude
+        super.viewDidAppear(animated)
         
-        let motionManager = AppDelegate.Motion.Manager
-        if !motionManager.deviceMotionActive {
-            if motionManager.deviceMotionAvailable {
-                 motionManager.startDeviceMotionUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { [unowned self] (data, error) -> Void in
-                    if let motionData = data {
-                        let roll = min(max(motionData.attitude.roll, -0.3), 0.3)
-                        let mapping = (roll + 0.3)/0.6
-                        self.paddle.frame.origin.x = CGFloat(mapping) * (self.gameView.frame.width - self.paddle.frame.width)
-                        self.behavior.removeBoundary("paddle")
-                        self.behavior.addBoundary("paddle", path: self.createBoundary(self.paddle))
-                    }
-                })
+        if paddleControlType == 0 {
+            let motionManager = AppDelegate.Motion.Manager
+            if !motionManager.deviceMotionActive {
+                if motionManager.deviceMotionAvailable {
+                    motionManager.startDeviceMotionUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { [unowned self] (data, error) -> Void in
+                        if let motionData = data {
+                            let roll = min(max(motionData.attitude.roll, -0.3), 0.3)
+                            let mapping = (roll + 0.3)/0.6
+                            self.paddle.frame.origin.x = CGFloat(mapping) * (self.gameView.frame.width - self.paddle.frame.width)
+                            self.behavior.removeBoundary("paddle")
+                            self.behavior.addBoundary("paddle", path: self.createBoundary(self.paddle))
+                        }
+                        })
+                }
             }
         }
-        
-        /*  CODE BELOW WORKS!  but works INSTEAD of code above; code above is smoother and more responsive; if code below is uncommented, be sure to uncomment the paddleGravity statements above
-        
-        if !motionManager.accelerometerActive {
-            if motionManager.accelerometerAvailable {
-                motionManager.startAccelerometerUpdatesToQueue(NSOperationQueue.mainQueue(), withHandler: { (data, error) -> Void in
-                    if let accelData = data {
-                        self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: 0)
-                        //self.paddleGravity.gravityDirection = CGVector(dx: accelData.acceleration.x, dy: -accelData.acceleration.y)
-                    }
-                })
-            }
-        }
-        
-        paddleGravity.action = { [unowned self] in
-            self.behavior.removeBoundary("paddle")
-            self.behavior.addBoundary("paddle", path: self.createBoundary(self.paddle))
-        }
-        */
     }
     
     override func viewDidDisappear(animated: Bool) {
