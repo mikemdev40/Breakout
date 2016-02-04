@@ -145,4 +145,5 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
 }

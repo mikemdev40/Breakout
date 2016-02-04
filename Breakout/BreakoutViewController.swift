@@ -7,7 +7,7 @@
 //
 
 
-//CODE WRITTEN TO WORK ON BOTH PROTRAIT AND LANDSCAPE, BUT IN THIS VERSION IN WHICH THE CORE MOTION IS BEING USED TO CONTROL THE PADDLE, landscape was turned off in the settings panel to prevent the tilting of the phone when controlling the paddle to convert to a rotation accidentally
+//CODE WRITTEN TO WORK ON BOTH PROTRAIT AND LANDSCAPE, BUT landscape was turned off in the settings panel to prevent the tilting of the phone when controlling the paddle to convert to a rotation accidentally
 
 import UIKit
 
@@ -44,7 +44,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Variables
     
-    var testModeWithBottomBoundary = false
+    var testModeWithBottomBoundary = true
     
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
@@ -207,7 +207,16 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 if let block = blocks["\(index)"] {
                     block.frame.size = blockSize
                     block.frame.origin = CGPoint(x: xLocation, y: yLocation)
-                    block.backgroundColor = UIColor.redColor()
+                    if let cmode = AppDelegate.UserSettings.settings.objectForKey(AppDelegate.UserSettings.challengeModeKey) as? Bool, let setting = blocksChallengeSetting["\(index)"] {
+                        if cmode && !setting {
+                            block.backgroundColor = UIColor.yellowColor()
+                        } else {
+                            block.backgroundColor = UIColor.redColor()
+                        }
+                    } else {
+                        block.backgroundColor = UIColor.redColor()
+                    }
+                    
                     let boxPath = UIBezierPath(rect: CGRect(origin: block.frame.origin, size: block.frame.size))
                     behavior.removeBoundary("\(index)")
                     behavior.addBoundary("\(index)", path: boxPath)
@@ -347,10 +356,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         }
         behavior.bounceCollider.collisionDelegate = self
         reset()
-    }
-    
-    override func didRotateFromInterfaceOrientation(fromInterfaceOrientation: UIInterfaceOrientation) {
-
     }
     
     override func viewDidLayoutSubviews() {
