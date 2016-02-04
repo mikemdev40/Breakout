@@ -34,7 +34,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
         static let paddleGravityMagnitude: CGFloat = 1
         static let fractionOfWidthThatEqualsPaddle: CGFloat = 0.2
         static let defaultPaddleWidth: CGFloat = 75
-        static let defaultPaddleType = 1
+        static let defaultPaddleType = 0
     }
     
     private enum gameOver {
