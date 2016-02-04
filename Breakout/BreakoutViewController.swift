@@ -364,6 +364,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         AppDelegate.Motion.Manager.stopAccelerometerUpdates()
+        AppDelegate.Motion.Manager.stopDeviceMotionUpdates()
         animator.removeAllBehaviors()
     }
     
