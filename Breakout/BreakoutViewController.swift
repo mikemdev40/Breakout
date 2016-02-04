@@ -176,13 +176,15 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                                 block.alpha = 0
                                 },
                                 completion: { [unowned self] (Bool) -> Void in
-                                    block.removeFromSuperview()
-                                    if self.blocks.count == 0 {
-                                        self.showGameOver(.Win)
-                                        if self.testModeWithBottomBoundary {
-                                            self.behavior.removeBoundary("bottomwall")
+                                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                        block.removeFromSuperview()
+                                        if self.blocks.count == 0 {
+                                            self.showGameOver(.Win)
+                                            if self.testModeWithBottomBoundary {
+                                                self.behavior.removeBoundary("bottomwall")
+                                            }
                                         }
-                                    }
+                                    })
                                 })
                         }
                     }
@@ -267,12 +269,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                 self.prepareUI()
                 self.setupAnimator()
             }))
-            alert.addAction(UIAlertAction(title: "Continue", style: .Default, handler: { (UIAlertAction) -> Void in
-                self.clearAnimator()
-                self.prepareUI()
-                self.setupAnimator()
-            }))
-            alert.addAction(UIAlertAction(title: "End", style: .Default, handler: nil))
 
             presentViewController(alert, animated: true, completion: nil)
         }
@@ -338,7 +334,6 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("breakout did load")
         let center = NSNotificationCenter.defaultCenter()
         let notificationQueue = NSOperationQueue.mainQueue()
         let receiver = behavior

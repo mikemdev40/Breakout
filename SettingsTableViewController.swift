@@ -132,7 +132,6 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("settings did load")
         // code below inspired by http://makeapppie.com/2015/02/04/swift-swift-tutorials-passing-data-in-tab-bar-controllers/
         // this allows us to connect the two VCs so that this one can serve as the datasource for the other
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
@@ -146,7 +145,4 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-//DELETED ALL THE DEFAULT STUFF THAT CAME WITH THE TABLEVIEWCONTROLLER SUBCLA FILE, SINCE THOSE WERE REALLY FOR DYNAMIC CELLS
-
 }
