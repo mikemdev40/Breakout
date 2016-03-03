@@ -44,7 +44,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     // MARK: Variables
     
-    var testModeWithBottomBoundary = true
+    var testModeWithBottomBoundary = false  //disables test mode (test mode enables a bottom boundry to prevent ball from escaping)
     
     var verticalSpacing: CGFloat = 10
     var horizontalSpacing: CGFloat = 10
