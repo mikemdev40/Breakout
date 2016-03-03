@@ -220,9 +220,9 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
                     let boxPath = UIBezierPath(rect: CGRect(origin: block.frame.origin, size: block.frame.size))
                     behavior.removeBoundary("\(index)")
                     behavior.addBoundary("\(index)", path: boxPath)
-                    numboxes++
+                    numboxes += 1
                 }
-                index++
+                index += 1
             }
         }
     }
@@ -246,7 +246,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
     
     private func setupBoxes() {
         var index = 0
-        for var count = 1; count <= Int(numberOfRows * blocksPerRow); ++count {
+        for _ in 1...Int(numberOfRows * blocksPerRow) {
             let block = UIView()
             gameView.addSubview(block)
             blocks["\(index)"] = block
@@ -259,7 +259,7 @@ class BreakoutViewController: UIViewController, UICollisionBehaviorDelegate {
             } else {
                 blocksChallengeSetting["\(index)"] = false
             }
-            index++
+            index += 1
         }
     }
     

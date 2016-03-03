@@ -15,6 +15,7 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         
         //ORDER (0 or 1) depends on the order in which you connect them to the tab bar controller in the stroy board (e.g. if you deleted the connections and then reconnect the settings view controller FIRST, then IT would be viewControllers[0]
+        
         viewControllers?[0].tabBarItem.title = "Breakout!"
         viewControllers?[0].tabBarItem.image = UIImage(named: "gameicon")
         viewControllers?[1].tabBarItem.title = "Settings"

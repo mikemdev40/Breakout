@@ -29,8 +29,9 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     var blocksPerRowData = Constants.blocks //required by protocol
     var challengeMode = false //required by protocol
     var ballMagnitude: CGFloat = Constants.ballSpeedNormal //required by 2nd protocol
-    var breakoutVC = BreakoutViewController()
     var paddleControl = 0
+
+    weak var breakoutVC: BreakoutViewController?
 
     @IBOutlet weak var numRowsSliderOutlet: UISlider!
     @IBOutlet weak var blocksPerRowOutlet: UIStepper!
@@ -65,7 +66,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         numRowsLabel.text = String(numRowsValue)
         
         if numberOfRowsData != numRowsValue {
-            breakoutVC.didUpdateAnything = true
+            breakoutVC?.didUpdateAnything = true
             AppDelegate.UserSettings.settings.setObject(numRowsValue, forKey: AppDelegate.UserSettings.numRowsKey)
         }
         
@@ -80,7 +81,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         numBlocksLabel.text = String(numBlocks)
         
         if blocksPerRowData != numBlocks {
-            breakoutVC.didUpdateAnything = true
+            breakoutVC?.didUpdateAnything = true
             AppDelegate.UserSettings.settings.setObject(numBlocks, forKey: AppDelegate.UserSettings.blocksPerRowKey)
         }
         
@@ -89,7 +90,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
     
     @IBAction func challengeSwitch(sender: UISwitch) {
         challengeMode = sender.on
-        breakoutVC.didUpdateAnything = true
+        breakoutVC?.didUpdateAnything = true
         AppDelegate.UserSettings.settings.setObject(challengeMode, forKey: AppDelegate.UserSettings.challengeModeKey)
     }
     
@@ -112,7 +113,7 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
 
     
     override func viewDidAppear(animated: Bool) {
-        breakoutVC.didUpdateAnything = false
+        breakoutVC?.didUpdateAnything = false
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -136,8 +137,8 @@ class SettingsTableViewController: UITableViewController, GameViewDataSource, Ba
         // this allows us to connect the two VCs so that this one can serve as the datasource for the other
         if let bvc = tabBarController?.viewControllers?[0] as? BreakoutViewController {
             breakoutVC = bvc
-            breakoutVC.dataSource = self
-            breakoutVC.behavior.dataSource = self
+            breakoutVC?.dataSource = self
+            breakoutVC?.behavior.dataSource = self
         }
     }
 
